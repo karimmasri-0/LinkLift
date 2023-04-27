@@ -1,0 +1,64 @@
+{
+  "name": "new_app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@floating-ui/react": "^0.23.1",
+    "@material-tailwind/react": "^1.4.2",
+    "@popperjs/core": "^2.11.7",
+    "@react-oauth/google": "^0.9.0",
+    "@splidejs/react-splide": "^0.7.12",
+    "@splidejs/splide-extension-grid": "^0.4.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.3.4",
+    "date-fns": "^2.29.3",
+    "firebase": "^9.18.0",
+    "focus-trap-react": "^10.1.1",
+    "formik": "^2.2.9",
+    "jwt-decode": "^3.1.2",
+    "react": "^18.2.0",
+    "react-day-picker": "^8.6.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.0",
+    "react-icons": "^4.8.0",
+    "react-modal": "^3.16.1",
+    "react-popper": "^2.3.0",
+    "react-responsive": "^9.0.2",
+    "react-router-dom": "^6.8.2",
+    "react-scripts": "5.0.1",
+    "react-spinners": "^0.13.8",
+    "sassy-datepicker": "^0.10.2",
+    "web-vitals": "^2.1.4",
+    "yup": "^1.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.3",
+    "tailwindcss": "^3.3.1"
+  }
+}
