@@ -1,0 +1,35 @@
+{
+  "user_id": 1,
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "phone_number": "00000000",
+  "email": "example@gmail.com",
+  "gender": "M/F",
+  "driver": {
+    "age": "18",
+    "vehicule_type": "Coupe",
+    "registration_number": "000000",
+    "certificate": "img.jpg",
+    "preferences": {
+      "animals_allowed": true,
+      "kids_allowed": false
+    },
+    "evaluation": {
+      "comments": [{ "user": "comment" }],
+      "rating": {
+        "average": 0,
+        "number_of_raters": 0
+      }
+    }
+  },
+  "offer": {
+    "taken": true,
+    "taken_by": "user_id",
+    "deparature": "city of dep",
+    "arrival": "city of arrival",
+    "distance": 0,
+    "passage": "",
+    "departure_date": "01:01:2023 12:42:00",
+    "passengers_nb": 2
+  }
+}
