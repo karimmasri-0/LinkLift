@@ -1,5 +1,4 @@
 import React from "react";
-import Layout from "../../components/Layout";
 import { useState } from "react";
 import {
   FloatingFocusManager,
@@ -102,7 +101,7 @@ function PublishRide() {
   ]);
 
   return (
-    <Layout>
+    <>
       <div className="pt-24">Publish Ride</div>
       <div className="grid place-content-center">
         <button ref={refs.setReference} {...getReferenceProps()}>
@@ -130,7 +129,7 @@ function PublishRide() {
         )}
         <Popover />
       </div>
-    </Layout>
+    </>
   );
 }
 

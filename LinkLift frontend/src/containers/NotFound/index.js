@@ -1,10 +1,10 @@
 import React from "react";
 import { AiFillCloseCircle, AiOutlineArrowRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import Layout from "../../components/Layout";
+
 const NotFound = () => {
   return (
-    <Layout>
+    <>
       <div className="h-[32rem] flex flex-col justify-center items-center ">
         <div className="flex w-full gap-2 items-center">
           <div className="border-b w-full mt-1"></div>
@@ -24,7 +24,7 @@ const NotFound = () => {
           <AiOutlineArrowRight className="ml-2" size={18} />
         </Link>
       </div>
-    </Layout>
+    </>
   );
 };
 

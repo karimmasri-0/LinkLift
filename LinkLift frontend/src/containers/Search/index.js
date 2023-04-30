@@ -8,7 +8,6 @@ import FocusTrap from "focus-trap-react";
 import { usePopper } from "react-popper";
 import "react-day-picker/dist/style.css";
 import { TiUserAdd } from "react-icons/ti";
-import Layout from "../../components/Layout";
 import deliver from "../../assets/deliver.png";
 
 const SearchForm = forwardRef((props, ref) => {
@@ -63,7 +62,7 @@ const SearchForm = forwardRef((props, ref) => {
   };
 
   return (
-    <Layout>
+    <>
       <section className="py-24 mx-12 lg:py-36 min-h-screen relative">
         {md ? (
           <div className=" flex items-center justify-center " ref={ref}>
@@ -215,7 +214,7 @@ const SearchForm = forwardRef((props, ref) => {
           alt="Deliver"
         />
       </section>
-    </Layout>
+    </>
   );
 });
 

@@ -12,7 +12,6 @@ import DriverForm from "./DriverForm";
 import PhoneNumberForm from "./PhoneNumberForm";
 import { AuthContext } from "../../providers/AuthProvider";
 import { GoogleLogin } from "@react-oauth/google";
-import Layout from "../../components/Layout";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -102,7 +101,7 @@ const Register = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="flex justify-center">
         <div className="px-6 mt-10 relative sm:w-2/3 md:w-3/6 lg:w-1/2">
           <div className="flex justify-between items-center ">
@@ -178,7 +177,7 @@ const Register = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

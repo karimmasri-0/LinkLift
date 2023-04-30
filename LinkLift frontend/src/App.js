@@ -1,4 +1,9 @@
-import { createBrowserRouter, RouterProvider, Routes } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  Routes,
+} from "react-router-dom";
 import { useRef } from "react";
 import Home from "./containers/Home";
 import About from "./containers/About";
@@ -22,21 +27,31 @@ function App() {
       behavior: "smooth",
     });
   };
-  const router = createBrowserRouter([
-    { path: "/", element: <Home ref={searchRef} /> },
-    { path: "auth/login", element: <Login /> },
-    { path: "auth/register", element: <Register /> },
-    { path: "about-us", element: <About /> },
-    { path: "how-it-works", element: <About /> },
-    { path: "help-center", element: <About /> },
-    { path: "contact", element: <Contact /> },
-    { path: "search", element: <Search /> },
-    { path: "publish-ride", element: <PublishRide /> },
-    { path: "profile", element: <Profile /> },
-    { path: "*", element: <NotFound /> },
-  ]);
-
-  return <RouterProvider router={router} />;
+  return (
+    <div>
+      <header>
+        <Header scrollToSearch={scrollToSearch} />
+      </header>
+      <main className="min-h-[100vh] pt-20 font-lato">
+        <Routes>
+          <Route path="/" element={<Home ref={searchRef} />} />
+          <Route path="auth/login" element={<Login />} />
+          <Route path="auth/register" element={<Register />} />
+          <Route path="about-us" element={<About />} />
+          <Route path="how-it-works" element={<About />} />
+          <Route path="help-center" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="search" element={<Search />} />
+          <Route path="publish-ride" element={<PublishRide />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <footer>
+        <Footer />
+      </footer>
+    </div>
+  );
 }
 
 export default App;

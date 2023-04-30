@@ -4,7 +4,6 @@ import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import InputField from "../../components/InputField";
-import Layout from "../../components/Layout";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +23,7 @@ const Login = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="flex justify-center items-center mt-20">
         <div className="border-2 rounded-2xl shadow-xl border-cblue-100 pb-5 pt-20 px-12">
           <div className="grid grid-cols-2 gap-24">
@@ -75,7 +74,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

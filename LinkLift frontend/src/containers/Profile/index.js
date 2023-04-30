@@ -5,7 +5,6 @@ import { TiEdit } from "react-icons/ti";
 import ProfileTextInput from "./ProfileTextInput";
 import { toast } from "react-hot-toast";
 import { ScaleLoader } from "react-spinners";
-import Layout from "../../components/Layout";
 import driverInfo from "../../assets/driver-info.png";
 import ProfileSelectInput from "./ProfileSelectInput";
 import { useFormik } from "formik";
@@ -255,7 +254,7 @@ function Profile() {
   };
 
   return (
-    <Layout>
+    <>
       {userData ? (
         formik.values.position === "Passenger" ? (
           <div className="flex justify-center my-20">
@@ -675,7 +674,7 @@ function Profile() {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }
 
