@@ -32,7 +32,7 @@ function ProfileSelectInput({
           touched && error ? "border-red-500" : "border-gray-500"
         }`}
       >
-        <option value={firstOption} disabled className="text-gray-400">
+        <option value={undefined} className="text-gray-400">
           {firstOption}
         </option>
         {elements.map((element) => (

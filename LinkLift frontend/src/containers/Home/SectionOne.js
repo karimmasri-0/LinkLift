@@ -24,18 +24,16 @@ function SectionOne() {
           Sign Up!
         </Link>
       )}
-      {userData &&
-        (userData.user.finished_setting_up_driver ||
-          userData.user.finished_setting_up_google_user) && (
-          <Link to="profile">
-            <div className="mt-6 flex gap-1 items-center text-white hover:underline hover:text-cblue-200 ">
-              <span className="text-sm cursor-pointer">
-                Finish setting up your account
-              </span>
-              <FiArrowRight />
-            </div>
-          </Link>
-        )}
+      {userData && !userData.finished_setting_up && (
+        <Link to="profile">
+          <div className="mt-6 flex gap-1 items-center text-white hover:underline hover:text-cblue-200 ">
+            <span className="text-sm cursor-pointer">
+              Finish setting up your account
+            </span>
+            <FiArrowRight />
+          </div>
+        </Link>
+      )}
       <img
         src={Image}
         className=" w-10/12 sm:w-8/12 md:w-5/12 lg:4/12"

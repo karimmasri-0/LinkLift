@@ -40,7 +40,8 @@ function AuthProvider({ children }) {
   const getUserData = () => {
     try {
       if (localStorage.getItem("user_data"))
-        setUserData(JSON.parse(localStorage.getItem("user_data")));
+        console.log(localStorage.getItem("user_data"));
+      setUserData(JSON.parse(localStorage.getItem("user_data")));
     } catch (error) {
       console.log(error);
       setUserData("");

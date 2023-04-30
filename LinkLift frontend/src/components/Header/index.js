@@ -60,7 +60,7 @@ const Header = ({ scrollToSearch }) => {
       <ul className="flex items-center gap-6 lg:gap-10">
         <li>
           <button
-            onClick={location.pathname === "/" ? "" : goToSearch}
+            // onClick={location.pathname === "/" ? "" : goToSearch}
             className="text-cblue-200 px-4 py-2 flex items-center"
           >
             <BiSearchAlt className="mr-2" size={24} />

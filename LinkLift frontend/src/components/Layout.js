@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useRef } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
 function Layout({ children }) {
+  const searchRef = useRef(null);
+  const scrollToSearch = () => {
+    searchRef.current.scrollIntoView({
+      block: "center",
+      behavior: "smooth",
+    });
+  };
   return (
     <>
       <Header />

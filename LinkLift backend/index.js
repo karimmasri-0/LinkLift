@@ -5,6 +5,7 @@ connectDB();
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());
+app.use("/uploads", express.static("uploads"));
 
 const userRoutes = require("./routes/userRoutes");
 const topReviewsRoutes = require("./routes/topReviewsRoutes");

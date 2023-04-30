@@ -1,9 +1,19 @@
 const User = require("../models/userModel");
+const Driver = require("../models/driverModel");
 const validator = require("validator");
 const jsonwebtoken = require("jsonwebtoken");
 const { promisify } = require("util");
 const bcrypt = require("bcrypt");
+const { ObjectId } = require("mongodb");
+const merge = require("deepmerge");
 
+const decodeToken = async (token) => {
+  const decoded = await promisify(jsonwebtoken.verify)(
+    token,
+    process.env.JWT_SECRET
+  );
+  return decoded.id;
+};
 const signToken = (id) => {
   return jsonwebtoken.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -160,7 +170,7 @@ exports.googleLogin = async (req, res) => {
         last_name: decoded.family_name,
         picture: decoded.picture,
         email: decoded.email,
-        finished_setting_up_google_user: false,
+        finished_setting_up: false,
       });
       createAndSendToken(newUser, res, 201);
     } else {
@@ -173,31 +183,102 @@ exports.googleLogin = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  const decoded = await promisify(jsonwebtoken.verify)(
-    req.query.token,
-    process.env.JWT_SECRET
-  );
-  const currentUser = await User.findOne({ _id: decoded.id });
-  console.log(currentUser);
-  if (!currentUser)
-    return res.status(404).json({ error: true, message: "Error Occured" });
-  return res.status(200).json({ error: false, user_data: currentUser });
+  try {
+    const id = new ObjectId(await decodeToken(req.query.token));
+    console.log(
+      "////////////////////////////////////////",
+      id,
+      "////////////////////////////////////////"
+    );
+    var currentUser = await User.findOne({ _id: id });
+    if (!currentUser)
+      return res.status(404).json({ error: true, message: "Error Occured" });
+    if (currentUser.position == "Driver") {
+      var driver = await Driver.findOne({ user: id });
+      console.log("driver >>> ", driver);
+      if (driver) {
+        console.log(true);
+        currentUser = { ...driver.toObject(), ...currentUser.toObject() };
+        console.log("currentUser >>> ", currentUser);
+      }
+    }
+    delete currentUser.password;
+    return res.status(200).json({ message: "ok", user_data: currentUser });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error });
+  }
 };
 
-exports.updateUser = async (req, res) => {
-  console.log(
-    "////////////////UPDATE USER////////////////////////\n",
-    req.body.data,
-    "\n///////////////////////////////////////////////////"
-  );
-  // const decodedToken = await promisify(jsonwebtoken.verify)(
-  //   req.body.token,
-  //   process.env.JWT_SECRET
-  // );
-  // const test = await User.findOneAndUpdate(
-  //   { _id: decodedToken.id },
-  //   { ...req.body.data }
-  // );
-  // console.log(test);
-  return res.status(200).json({ message: "ok" });
+exports.updateUser = async (req, res, namesArray) => {
+  try {
+    var currentUser = {};
+    const updateUser = {};
+    const updateDriver = {};
+    const userID = await decodeToken(req.headers.token);
+    console.log(
+      "////////////////UPDATE USER////////////////////////\n",
+      await decodeToken(req.headers.token),
+      "\n///////////////////////////////////////////////////"
+    );
+    for (let index = 0; index < namesArray.length; index++) {
+      if (namesArray[index].hashasOwnProperty("CARIMAGE"))
+        updateDriver.car_image = namesArray[index]["CARIMAGE"];
+      if (namesArray[index].hashasOwnProperty("CERTIFICATE"))
+        updateDriver.certificate = namesArray[index]["CERTIFICATE"];
+      if (namesArray[index].hashasOwnProperty("PICTURE"))
+        updateUser.picture = namesArray[index]["PICTURE"];
+    }
+
+    updateUser.first_name = req.body.firstName;
+    updateUser.last_name = req.body.lastName;
+    updateUser.email = req.body.email;
+    updateUser.gender = req.body.gender;
+    updateUser.position = req.body.position;
+    if (req.body.phone) updateUser.phone_number = req.body.phone;
+    if (
+      req.body.firsName &&
+      req.body.lastName &&
+      req.body.email &&
+      req.body.gender &&
+      req.body.position
+    )
+      updateUser.finished_setting_up = true;
+    else updateUser.finished_setting_up = false;
+    await User.findOneAndUpdate({ _id: userID }, updateUser, {
+      new: true,
+    }).then((e) => (currentUser = e.toObject()));
+    if (req.body.position == "Driver") {
+      if (req.body.age) updateDriver.age = req.body.age;
+      if (req.body.vehiculeType)
+        updateDriver.vehicule_type = req.body.vehiculeType;
+      if (req.body.registrationNumber)
+        updateDriver.registration_number = req.body.registrationNumber;
+      if (req.body.preferences) updateDriver.preferences = req.body.preferences;
+
+      if (
+        req.body.age &&
+        req.body.vehiculeType &&
+        req.body.registrationNumber &&
+        updateDriver.car_image &&
+        updateDriver.certificate &&
+        req.body.preferences
+      )
+        updateDriver.finished_setting_up = true;
+      else updateDriver.finished_setting_up = false;
+      await Driver.findOneAndUpdate({ user: userID }, updateDriver, {
+        upsert: true,
+        new: true,
+      }).then((e) => (currentUser = { ...e.toObject(), ...currentUser }));
+    }
+    // console.log("updateUser >>> ", updateUser);
+    // console.log("updateDriver >>> ", updateDriver);
+    delete currentUser.password;
+    currentUser.finished_setting_up = true;
+    console.log(currentUser);
+    return res.status(200).json({ message: "ok", user_data: currentUser });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "error" });
+  }
 };

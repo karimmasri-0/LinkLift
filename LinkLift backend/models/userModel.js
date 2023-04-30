@@ -50,14 +50,9 @@ const userSchema = new Schema(
       required: false,
       enum: ["Driver", "Passenger", "undefined"],
     },
-    finished_setting_up_google_user: {
-      type: String,
+    finished_setting_up: {
+      type: Boolean,
       required: true,
-    },
-    finished_setting_up_driver: {
-      type: String,
-      required: true,
-      default: true,
     },
   },
   { timestamps: true }

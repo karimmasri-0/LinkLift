@@ -18,8 +18,9 @@ function Profile() {
   const [carImageURL, setCarImageURL] = useState("");
   const [pictureURL, setPictureURL] = useState("");
   const [imageHover, setImageHover] = useState(false);
+  const [changedProfilePicture, setChangedProfilePicture] = useState(false);
   const profileImageRef = useRef(null);
-  const FILE_SIZE = 20_000_000;
+  const FILE_SIZE = 2_000_000;
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
   const postData = async (values) => {
     await axios.post(
@@ -137,22 +138,47 @@ function Profile() {
     onSubmit: async (values) => {
       const formData = new FormData();
       for (let key in values) {
+        if (Array.isArray(values[key])) {
+          for (var i = 0; i < values[key].length; i++) {
+            formData.append(key, values[key][i]);
+          }
+          continue;
+        }
+        if (
+          values.hasOwnProperty(key) &&
+          (key === "carImage" || key === "certificate" || key === "picture")
+        ) {
+          if (key === "picture" && changedProfilePicture === false) continue;
+          formData.append("images", values[key]);
+          continue;
+        }
         if (values.hasOwnProperty(key)) {
           formData.append(key, values[key]);
         }
       }
-      console.log(values);
+      console.log(formData);
       await axios
         .post(
           `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/update-user`,
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              token:
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzY5NDQyNzhkYWYzM2MyODM5OGI2YyIsImlhdCI6MTY4MTI5ODQ5OCwiZXhwIjoxNjgzODkwNDk4fQ.VnWEcKzG8qJ3-jjFKKp5BIcZRTXi_hDLy0RFJIk8T4w",
+              accept: "application/json",
+              "Accept-Language": "en-US,en;q=0.8",
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
             },
           }
         )
-        .then((e) => console.log(e));
+        .then((resp) => {
+          console.log(JSON.stringify(resp.data.user_data));
+          localStorage.setItem(
+            "user_data",
+            JSON.stringify(resp.data.user_data)
+          );
+        })
+        .catch((error) => console.log(error));
     },
   });
 
@@ -170,7 +196,7 @@ function Profile() {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzY5NDQyNzhkYWYzM2MyODM5OGI2YyIsImlhdCI6MTY4MTI5ODQ5OCwiZXhwIjoxNjgzODkwNDk4fQ.VnWEcKzG8qJ3-jjFKKp5BIcZRTXi_hDLy0RFJIk8T4w"
       );
       const response = await axios.get(url);
-
+      console.log(response.data.user_data);
       setUserData(response.data.user_data);
       formik.values.firstName = response.data.user_data.first_name;
       formik.values.lastName = response.data.user_data.last_name;
@@ -180,13 +206,15 @@ function Profile() {
       formik.values.position = response.data.user_data?.position ?? "";
       formik.values.picture = response.data.user_data?.picture ?? "";
       formik.values.age = response.data.user_data?.age ?? "";
-      formik.values.vehiculeType = response.data.user_data?.vehiculeType ?? "";
+      formik.values.vehiculeType = response.data.user_data?.vehicule_type ?? "";
       formik.values.registrationNumber =
-        response.data.user_data?.registrationNumber ?? "";
+        response.data.user_data?.registration_number ?? "";
       formik.values.carImage = response.data.user_data?.carImage ?? "";
       formik.values.certificate = response.data.user_data?.certificate ?? "";
+      formik.values.preferences = response.data.user_data?.preferences ?? "";
+      console.log("formik.values.preferences >>> ", formik.values.preferences);
       if (formik.values.picture) {
-        await axios
+        axios
           .get(formik.values.picture, { responseType: "blob" })
           .then((response) => {
             const file = new File([response.data], "image.jpg", {
@@ -211,7 +239,13 @@ function Profile() {
   useEffect(() => console.log(formik.values), [formik.values]);
 
   const handleImageUpload = (event, field, setValue) => {
-    const file = event.currentTarget.files[0];
+    const file = new File(
+      [event.currentTarget.files[0]],
+      `__${field.toUpperCase()}__${event.currentTarget.files[0].name}`,
+      {
+        type: event.currentTarget.files[0].type,
+      }
+    );
     formik.setFieldValue(field, file);
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -236,9 +270,10 @@ function Profile() {
                   type="file"
                   ref={profileImageRef}
                   accept={["image/jpg", "image/jpeg", "image/png"]}
-                  onChange={(e) =>
-                    handleImageUpload(e, "picture", setPictureURL)
-                  }
+                  onChange={(e) => {
+                    setChangedProfilePicture(true);
+                    handleImageUpload(e, "picture", setPictureURL);
+                  }}
                   onBlur={formik.handleBlur("picture")}
                   hidden
                 />
@@ -258,7 +293,7 @@ function Profile() {
                   <img
                     src={pictureURL}
                     onClick={() => profileImageRef.current.click()}
-                    className={`w-24 z-10 border-2 rounded-full hover:opacity-40 transition-all cursor-pointer ${
+                    className={`w-24 h-24 z-10 border-2 rounded-full hover:opacity-40 transition-all cursor-pointer ${
                       formik.touched.picture && formik.errors.picture
                         ? " border-red-500 "
                         : " border-gray-500"
@@ -394,9 +429,10 @@ function Profile() {
                     type="file"
                     ref={profileImageRef}
                     accept={["image/jpg", "image/jpeg", "image/png"]}
-                    onChange={(e) =>
-                      handleImageUpload(e, "picture", setPictureURL)
-                    }
+                    onChange={(e) => {
+                      setChangedProfilePicture(true);
+                      handleImageUpload(e, "picture", setPictureURL);
+                    }}
                     onBlur={formik.handleBlur("picture")}
                     hidden
                   />
@@ -416,7 +452,7 @@ function Profile() {
                     <img
                       src={pictureURL}
                       onClick={() => profileImageRef.current.click()}
-                      className={`w-24 z-10 border-2 rounded-full hover:opacity-40 transition-all cursor-pointer ${
+                      className={`w-24 h-24 z-10 border-2 rounded-full hover:opacity-40 transition-all cursor-pointer ${
                         formik.touched.picture && formik.errors.picture
                           ? " border-red-500 "
                           : " border-gray-500"
@@ -574,6 +610,9 @@ function Profile() {
                     <ul className="pl-5">
                       <li>
                         <input
+                          checked={formik.values.preferences.includes(
+                            "animals_allowed"
+                          )}
                           onChange={formik.handleChange("preferences")}
                           type="checkbox"
                           name="animals"
@@ -586,6 +625,9 @@ function Profile() {
                       </li>
                       <li>
                         <input
+                          checked={formik.values.preferences.includes(
+                            "kids_allowed"
+                          )}
                           onChange={formik.handleChange("preferences")}
                           type="checkbox"
                           name="kids"
@@ -598,6 +640,9 @@ function Profile() {
                       </li>
                       <li>
                         <input
+                          checked={formik.values.preferences.includes(
+                            "smoking_allowed"
+                          )}
                           onChange={formik.handleChange("preferences")}
                           type="checkbox"
                           name="smoking"
