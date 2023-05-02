@@ -184,7 +184,7 @@ exports.googleLogin = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const id = new ObjectId(await decodeToken(req.query.token));
+    const id = new ObjectId(await decodeToken(req.headers.token));
     console.log(
       "////////////////////////////////////////",
       id,
@@ -218,15 +218,15 @@ exports.updateUser = async (req, res, namesArray) => {
     const userID = await decodeToken(req.headers.token);
     console.log(
       "////////////////UPDATE USER////////////////////////\n",
-      await decodeToken(req.headers.token),
+      namesArray,
       "\n///////////////////////////////////////////////////"
     );
     for (let index = 0; index < namesArray.length; index++) {
-      if (namesArray[index].hashasOwnProperty("CARIMAGE"))
+      if (Object.keys(namesArray[index])[0] === "CARIMAGE")
         updateDriver.car_image = namesArray[index]["CARIMAGE"];
-      if (namesArray[index].hashasOwnProperty("CERTIFICATE"))
+      if (Object.keys(namesArray[index])[0] === "CERTIFICATE")
         updateDriver.certificate = namesArray[index]["CERTIFICATE"];
-      if (namesArray[index].hashasOwnProperty("PICTURE"))
+      if (Object.keys(namesArray[index])[0] === "PICTURE")
         updateUser.picture = namesArray[index]["PICTURE"];
     }
 
@@ -271,8 +271,6 @@ exports.updateUser = async (req, res, namesArray) => {
         new: true,
       }).then((e) => (currentUser = { ...e.toObject(), ...currentUser }));
     }
-    // console.log("updateUser >>> ", updateUser);
-    // console.log("updateDriver >>> ", updateDriver);
     delete currentUser.password;
     currentUser.finished_setting_up = true;
     console.log(currentUser);

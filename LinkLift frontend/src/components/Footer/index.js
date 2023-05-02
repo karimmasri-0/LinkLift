@@ -81,16 +81,16 @@ function Footer() {
         {/* </div> */}
       </div>
       <div className="border-b mt-8"></div>
-      <div className="flex justify-between items-center mx-20 py-6 text-gray-500">
-        <div className="text-sm flex items-center gap-1">
-          <CgCopyright size={20} />
+      <div className="sm:flex sm:justify-between sm:items-center mx-4 md:mx-16 lg:mx-20 py-6 text-gray-500">
+        <div className="flex items-center gap-1">
+          <CgCopyright size={22} />
           LinkLift. All rights reserved.
         </div>
-        <div className="flex gap-8">
-          <Link to="" className="p-1 hover:underline">
+        <div className="sm:flex sm:gap-8 text-sm mt-5 sm:mt-0 text-center">
+          <Link to="" className="p-1 hover:underline block">
             Terms and consitions
           </Link>
-          <Link to="" className="p-1 hover:underline">
+          <Link to="" className="p-1 hover:underline block">
             Privacy policy
           </Link>
         </div>

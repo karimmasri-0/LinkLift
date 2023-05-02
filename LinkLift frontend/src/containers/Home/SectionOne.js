@@ -7,8 +7,6 @@ import { FiArrowRight } from "react-icons/fi";
 function SectionOne() {
   const { token } = useContext(AuthContext);
   const { userData } = useContext(AuthContext);
-  // const { token } = "";
-  // const { userData } = "";
 
   return (
     <section className=" bg-cblue-100 flex flex-col items-center pt-28">

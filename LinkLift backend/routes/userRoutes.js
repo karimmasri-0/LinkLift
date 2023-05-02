@@ -4,6 +4,7 @@ const userController = require("../controllers/userController");
 const topReviewsController = require("../controllers/topReviewsController");
 const multer = require("multer");
 const axios = require("axios");
+const sharp = require("sharp");
 const fs = require("fs").promises;
 
 const storage = multer.diskStorage({
@@ -43,36 +44,35 @@ router.get("/user", (req, res) => {
 
 router.post("/update-user", upload.array("images"), async (req, res) => {
   try {
-    var formdata = new FormData();
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Client-ID 87c45a2e9075dd6");
+    var base64Images;
     Promise.all(
-      req.files.map(async (file) => {
-        const base64Images = await fs.readFile("uploads/" + file.filename, {
-          encoding: "base64",
-        });
-        formdata.append("image", base64Images);
-        var requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: formdata,
-          redirect: "follow",
-        };
-
-        return await fetch("https://api.imgur.com/3/image", requestOptions)
-          .then((response) => response.text())
-          .then((result) => {
+      await req.files.map(async (file) => {
+        base64Images = await fs.readFile("uploads/" + file.filename);
+        if (file.mimetype === "image/webp")
+          base64Images = sharp(base64Images).png();
+        return axios({
+          method: "post",
+          url: "https://api.imgur.com/3/image",
+          headers: {
+            Authorization: "Client-ID 87c45a2e9075dd6",
+            "Content-Type": "application/json",
+          },
+          data: base64Images,
+        })
+          .then(function (response) {
             var filesNames = {};
             if (file.filename.includes("__CERTIFICATE__"))
-              filesNames["CERTIFICATE"] = JSON.parse(result).data.link;
+              filesNames["CERTIFICATE"] = response.data.data.link;
             else if (file.filename.includes("__CARIMAGE__"))
-              filesNames["CARIMAGE"] = JSON.parse(result).data.link;
+              filesNames["CARIMAGE"] = response.data.data.link;
             else if (file.filename.includes("__PICTURE__"))
-              filesNames["PICTURE"] = JSON.parse(result).data.link;
-
+              filesNames["PICTURE"] = response.data.data.link;
+            console.log(filesNames);
             return filesNames;
           })
-          .catch((error) => console.log("error", error));
+          .catch(function (error) {
+            console.error("Error uploading image:", error);
+          });
       })
     ).then((namesArray) => userController.updateUser(req, res, namesArray));
   } catch (error) {

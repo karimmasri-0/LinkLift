@@ -16,7 +16,7 @@ function ProfileFileInput({
         {required && <span className="text-red-500 ml-1 text-lg">*</span>}
       </label>
       <input
-        accept={["image/jpg", "image/jpeg", "image/png"]}
+        accept={["image/jpg", "image/jpeg", "image/png", "image/webp"]}
         name={label}
         type={"file"}
         onChange={onChange}

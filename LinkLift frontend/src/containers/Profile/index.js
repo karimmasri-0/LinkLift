@@ -11,16 +11,28 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ProfileFileInput from "./ProfileFileInput";
 import { MdOutlineCameraswitch } from "react-icons/md";
+import { useMediaQuery } from "react-responsive";
 
 function Profile() {
+  const { token } = useContext(AuthContext);
+  const [userData, setUserData] = useState("");
+  const [disabled, setDisabled] = useState(true);
   const [certificateImageURL, setCertificateImageURL] = useState("");
   const [carImageURL, setCarImageURL] = useState("");
   const [pictureURL, setPictureURL] = useState("");
   const [imageHover, setImageHover] = useState(false);
   const [changedProfilePicture, setChangedProfilePicture] = useState(false);
+  const [changedCarImage, setChangedCarImage] = useState(false);
+  const [changedCertificate, setChangedCertificate] = useState(false);
   const profileImageRef = useRef(null);
   const FILE_SIZE = 2_000_000;
-  const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
+  const SUPPORTED_FORMATS = [
+    "image/jpg",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ];
+  const sm = useMediaQuery({ query: "(min-width: 640px)" });
   const postData = async (values) => {
     await axios.post(
       `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/update-user`,
@@ -123,11 +135,9 @@ function Profile() {
       certificate: Yup.mixed()
         .nullable()
         .notRequired()
-        .test(
-          "FILE_SIZE",
-          "Uploaded file is too big.",
-          (value) => !value || (value && value.size <= FILE_SIZE)
-        )
+        .test("FILE_SIZE", "Uploaded file is too big.", (value) => {
+          return !value || (value && value.size <= FILE_SIZE);
+        })
         .test(
           "FILE_FORMAT",
           "Uploaded file has unsupported format.",
@@ -147,7 +157,9 @@ function Profile() {
           values.hasOwnProperty(key) &&
           (key === "carImage" || key === "certificate" || key === "picture")
         ) {
-          if (key === "picture" && changedProfilePicture === false) continue;
+          if (key === "picture" && !changedProfilePicture) continue;
+          if (key === "carImage" && !changedCarImage) continue;
+          if (key === "certificate" && !changedCertificate) continue;
           formData.append("images", values[key]);
           continue;
         }
@@ -155,7 +167,6 @@ function Profile() {
           formData.append(key, values[key]);
         }
       }
-      console.log(formData);
       await axios
         .post(
           `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/update-user`,
@@ -171,7 +182,7 @@ function Profile() {
           }
         )
         .then((resp) => {
-          console.log(JSON.stringify(resp.data.user_data));
+          console.log(resp.data.user_data);
           localStorage.setItem(
             "user_data",
             JSON.stringify(resp.data.user_data)
@@ -181,20 +192,36 @@ function Profile() {
     },
   });
 
-  const { token } = useContext(AuthContext);
-  const [userData, setUserData] = useState("");
-  const [disabled, setDisabled] = useState(true);
-
+  const readImage = (value, setValue, fieldValue) => {
+    try {
+      if (value) {
+        axios.get(value, { responseType: "blob" }).then((response) => {
+          const file = new File([response.data], "image.jpg", {
+            type: "image/jpeg",
+          });
+          formik.setFieldValue(fieldValue, file);
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setValue(reader.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fetchAPI = async () => {
     try {
-      const url = new URL(
-        `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/user`
+      const response = await axios.get(
+        `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/user`,
+        {
+          headers: {
+            token:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzY5NDQyNzhkYWYzM2MyODM5OGI2YyIsImlhdCI6MTY4MTI5ODQ5OCwiZXhwIjoxNjgzODkwNDk4fQ.VnWEcKzG8qJ3-jjFKKp5BIcZRTXi_hDLy0RFJIk8T4w",
+          },
+        }
       );
-      url.searchParams.set(
-        "token",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzY5NDQyNzhkYWYzM2MyODM5OGI2YyIsImlhdCI6MTY4MTI5ODQ5OCwiZXhwIjoxNjgzODkwNDk4fQ.VnWEcKzG8qJ3-jjFKKp5BIcZRTXi_hDLy0RFJIk8T4w"
-      );
-      const response = await axios.get(url);
       console.log(response.data.user_data);
       setUserData(response.data.user_data);
       formik.values.firstName = response.data.user_data.first_name;
@@ -208,25 +235,16 @@ function Profile() {
       formik.values.vehiculeType = response.data.user_data?.vehicule_type ?? "";
       formik.values.registrationNumber =
         response.data.user_data?.registration_number ?? "";
-      formik.values.carImage = response.data.user_data?.carImage ?? "";
+      formik.values.carImage = response.data.user_data?.car_image ?? "";
       formik.values.certificate = response.data.user_data?.certificate ?? "";
       formik.values.preferences = response.data.user_data?.preferences ?? "";
-      console.log("formik.values.preferences >>> ", formik.values.preferences);
-      if (formik.values.picture) {
-        axios
-          .get(formik.values.picture, { responseType: "blob" })
-          .then((response) => {
-            const file = new File([response.data], "image.jpg", {
-              type: "image/jpeg",
-            });
-            formik.setFieldValue("picture", file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              setPictureURL(reader.result);
-            };
-            reader.readAsDataURL(file);
-          });
-      }
+      readImage(formik.values.picture, setPictureURL, "picture");
+      readImage(formik.values.carImage, setCarImageURL, "carImage");
+      readImage(
+        formik.values.certificate,
+        setCertificateImageURL,
+        "certificate"
+      );
     } catch (error) {
       console.log(error);
     }
@@ -252,7 +270,6 @@ function Profile() {
     };
     reader.readAsDataURL(file);
   };
-
   return (
     <>
       {userData ? (
@@ -305,7 +322,6 @@ function Profile() {
                   {formik.touched.picture && formik.errors.picture && (
                     <div className="absolute text-red-500 text-sm">
                       {formik.errors.picture}
-                      {console.log(typeof formik.values.picture)}
                     </div>
                   )}
                 </div>
@@ -413,17 +429,17 @@ function Profile() {
           <form
             onSubmit={formik.handleSubmit}
             onReset={formik.handleReset}
-            className="lg:grid grid-cols-2 px-20"
+            className="lg:grid lg:grid-cols-2 grid place-items-center w-full"
           >
-            <div className="grid place-content-center lg:col-span-1">
-              <img src={driverInfo} alt="Driver Profile" className="max-w-md" />
+            <div className=" lg:col-span-1 max-w-md">
+              <img src={driverInfo} alt="Driver Profile" className=" " />
             </div>
-            <div className="bg-cyan-50 h-screen overflow-scroll my-16 lg:col-span-1">
+            <div className="bg-cyan-50 sm:h-screen sm:overflow-scroll my-16 lg:col-span-1 mx-8">
               <div className="space-y-3 relative">
                 <h2 className="bg-cblue-100 text-white text-2xl py-4 px-8">
                   Personal Information
                 </h2>
-                <div className="space-y-5 pl-4 w-2/3 ">
+                <div className="space-y-5 px-4 sm:w-2/3 ">
                   <input
                     type="file"
                     ref={profileImageRef}
@@ -435,63 +451,66 @@ function Profile() {
                     onBlur={formik.handleBlur("picture")}
                     hidden
                   />
-                  <div className="absolute top-20 right-5">
-                    {imageHover && (
-                      <div
-                        className={`z-0 ${
-                          imageHover ? "block" : "display-none"
-                        } transition-all`}
-                      >
-                        <MdOutlineCameraswitch
-                          className="absolute  top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 text-black"
-                          size={30}
+                  <div className="grid grid-cols-2 sm:grid-cols-1">
+                    <div className="sm:flex sm:items-center sm:gap-4 space-y-4 sm:space-y-0 w-full  col-span-1">
+                      <div className="">
+                        <ProfileTextInput
+                          label="First Name"
+                          value={formik.values.firstName}
+                          onChange={formik.handleChange("firstName")}
+                          onBlur={formik.handleBlur("firstName")}
+                          touched={formik.touched.firstName}
+                          error={formik.errors.firstName}
+                          placeholder={"Nikola"}
+                          required={true}
                         />
                       </div>
-                    )}
-                    <img
-                      src={pictureURL}
-                      onClick={() => profileImageRef.current.click()}
-                      className={`w-24 h-24 z-10 border-2 rounded-full hover:opacity-40 transition-all cursor-pointer ${
-                        formik.touched.picture && formik.errors.picture
-                          ? " border-red-500 "
-                          : " border-gray-500"
-                      }`}
-                      alt="Preview Profile"
-                      onMouseEnter={() => setImageHover(true)}
-                      onMouseLeave={() => setImageHover(false)}
-                    />
-
-                    {formik.touched.picture && formik.errors.picture && (
-                      <div className="absolute text-red-500 text-sm">
-                        {formik.errors.picture}
-                        {console.log(typeof formik.values.picture)}
+                      <div className="">
+                        <ProfileTextInput
+                          label="Last Name"
+                          value={formik.values.lastName}
+                          onChange={formik.handleChange("lastName")}
+                          onBlur={formik.handleBlur("lastName")}
+                          touched={formik.touched.lastName}
+                          error={formik.errors.lastName}
+                          placeholder={"Tesla"}
+                          required={true}
+                        />
                       </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-4 w-full">
-                    <div className="w-1/2">
-                      <ProfileTextInput
-                        label="First Name"
-                        value={formik.values.firstName}
-                        onChange={formik.handleChange("firstName")}
-                        onBlur={formik.handleBlur("firstName")}
-                        touched={formik.touched.firstName}
-                        error={formik.errors.firstName}
-                        placeholder={"Nikola"}
-                        required={true}
-                      />
                     </div>
-                    <div className="w-1/2">
-                      <ProfileTextInput
-                        label="Last Name"
-                        value={formik.values.lastName}
-                        onChange={formik.handleChange("lastName")}
-                        onBlur={formik.handleBlur("lastName")}
-                        touched={formik.touched.lastName}
-                        error={formik.errors.lastName}
-                        placeholder={"Tesla"}
-                        required={true}
-                      />
+                    <div className="grid place-items-center">
+                      <div className="sm:absolute col-span-1 top-20 right-5 ">
+                        {imageHover && (
+                          <div
+                            className={`z-0 ${
+                              imageHover ? "block" : "display-none"
+                            } transition-all`}
+                          >
+                            <MdOutlineCameraswitch
+                              className="absolute  top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 text-black"
+                              size={30}
+                            />
+                          </div>
+                        )}
+                        <img
+                          src={pictureURL}
+                          onClick={() => profileImageRef.current.click()}
+                          className={`w-24 h-24 z-10 border-2 rounded-full hover:opacity-40 transition-all cursor-pointer ${
+                            formik.touched.picture && formik.errors.picture
+                              ? " border-red-500 "
+                              : " border-gray-500"
+                          }`}
+                          alt="Preview Profile"
+                          onMouseEnter={() => setImageHover(true)}
+                          onMouseLeave={() => setImageHover(false)}
+                        />
+
+                        {formik.touched.picture && formik.errors.picture && (
+                          <div className="absolute text-red-500 text-sm">
+                            {formik.errors.picture}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <ProfileTextInput
@@ -541,7 +560,7 @@ function Profile() {
                 <h2 className="bg-cblue-100 text-white text-2xl py-4 px-8">
                   Driving Consent
                 </h2>
-                <div className="space-y-3 pl-4 pr-44">
+                <div className=" space-y-3 px-4 sm:w-2/3">
                   <ProfileTextInput
                     label="Age"
                     value={formik.values.age}
@@ -584,9 +603,10 @@ function Profile() {
                     label="Car Image"
                     touched={formik.touched.carImage}
                     error={formik.errors.carImage}
-                    onChange={(e) =>
-                      handleImageUpload(e, "carImage", setCarImageURL)
-                    }
+                    onChange={(e) => {
+                      setChangedCarImage(true);
+                      handleImageUpload(e, "carImage", setCarImageURL);
+                    }}
                     onBlur={formik.handleBlur("carImage")}
                     imageURL={carImageURL}
                   />
@@ -594,13 +614,14 @@ function Profile() {
                     label="Certificate"
                     touched={formik.touched.certificate}
                     error={formik.errors.certificate}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      setChangedCertificate(true);
                       handleImageUpload(
                         e,
                         "certificate",
                         setCertificateImageURL
-                      )
-                    }
+                      );
+                    }}
                     onBlur={formik.handleBlur("certificate")}
                     imageURL={certificateImageURL}
                   />
@@ -656,10 +677,10 @@ function Profile() {
                   </div>
                 </div>
               </div>
-              <div className="grid place-items-center my-6">
+              <div className="grid place-items-center">
                 <button
                   type="submit"
-                  className="px-40 py-2 text-lg bg-cyan-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 trasnition-all focus:opacity-[0.85] focus:shadow-none"
+                  className=" my-6 px-20 md:px-40 py-2 w-fit text-lg bg-cyan-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 trasnition-all focus:opacity-[0.85] focus:shadow-none"
                 >
                   Save
                 </button>

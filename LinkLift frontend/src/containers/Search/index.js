@@ -65,7 +65,7 @@ const SearchForm = forwardRef((props, ref) => {
     <>
       <section className="py-24 mx-12 lg:py-36 min-h-screen relative">
         {md ? (
-          <div className=" flex items-center justify-center " ref={ref}>
+          <div className=" flex items-center justify-center ">
             <form
               onSubmit={submitSearch}
               className="w-11/12 flex items-center justify-center rounded-l-full lg:rounded-r-full shadow-2xl bg-gray-200"
@@ -78,7 +78,7 @@ const SearchForm = forwardRef((props, ref) => {
                 <input
                   type={"text"}
                   placeholder="Leaving from ..."
-                  className="bg-transparent outline-transparent p-2"
+                  className="bg-transparent outline-transparent p-2 border-none"
                 />
               </div>
               <div className="w-4/12 flex items-center gap-1 bg-grey-200 px-4 py-2 bg-gray-200">
@@ -86,14 +86,14 @@ const SearchForm = forwardRef((props, ref) => {
                 <input
                   type={"text"}
                   placeholder="Going to ..."
-                  className="bg-transparent outline-transparent p-2"
+                  className="bg-transparent outline-transparent p-2 border-none"
                 />
               </div>
               <div className="w-3/12 flex items-center bg-grey-200 px-4 py-2 bg-gray-200">
                 <input
                   type={"date"}
                   placeholder="Date"
-                  className="bg-transparent outline-transparent text-cblue-100 p-2"
+                  className="bg-transparent outline-transparent text-cblue-100 p-2  border-none"
                 />
               </div>
               <div className="w-2/12 flex items-center gap-1 bg-gray-200 px-4 py-2 mr-10">
@@ -120,10 +120,10 @@ const SearchForm = forwardRef((props, ref) => {
             </form>
           </div>
         ) : (
-          <div className="flex justify-center" ref={ref}>
+          <div className="flex justify-center">
             <form
               onSubmit={submitSearch}
-              className="flex flex-col rounded-xl border-3 border-red-500 shadow-xl w-10/12"
+              className="flex flex-col rounded-xl border-3 border-red-500 shadow-xl w-10/12 bg-gray-200"
             >
               <div className=" px-4">
                 <div className=" py-2 mt-2 flex items-center border-b border-gray-300">
@@ -131,7 +131,7 @@ const SearchForm = forwardRef((props, ref) => {
                   <input
                     type={"text"}
                     placeholder="Leaving from ..."
-                    className="bg-transparent outline-transparent py-2 "
+                    className="bg-transparent outline-transparent py-2 border-none "
                   />
                 </div>
               </div>
@@ -141,14 +141,13 @@ const SearchForm = forwardRef((props, ref) => {
                   <input
                     type={"text"}
                     placeholder="Leaving from ..."
-                    className="bg-transparent outline-transparent py-2"
+                    className="bg-transparent outline-transparent py-2 border-none"
                   />
                 </div>
               </div>
               <div className="px-4">
                 <div className=" py-2 mt-2 flex items-center border-b border-gray-300">
                   <BsFillCalendarWeekFill className="mx-2 text-cblue-100 " />
-                  {/* <input type={"date"} /> */}
                   <div>
                     <div ref={popperRef}>
                       <input
@@ -156,7 +155,7 @@ const SearchForm = forwardRef((props, ref) => {
                         placeholder={format(new Date(), "y-MM-dd")}
                         value={inputValue}
                         onChange={handleInputChange}
-                        className="input-reset pa2 ma2 bg-white black ba w-28"
+                        className="input-reset pa2 ma2 bg-white black ba w-28 border-none"
                       />
                       <button
                         ref={buttonRef}
@@ -210,7 +209,7 @@ const SearchForm = forwardRef((props, ref) => {
         )}
         <img
           src={deliver}
-          className="absolute -top-10 w-1/2 -z-10 filter saturate-30 opacity-90 "
+          className="absolute -top-3 w-1/2 -z-10 filter saturate-30 opacity-90 md:-top-10"
           alt="Deliver"
         />
       </section>

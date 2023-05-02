@@ -1,9 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { useRef } from "react";
 import Home from "./containers/Home";
 import About from "./containers/About";
@@ -14,7 +9,6 @@ import NotFound from "./containers/NotFound";
 import Login from "./containers/Login";
 import Register from "./containers/Register";
 import PublishRide from "./containers/PublishRide";
-import { AuthProvider } from "./providers/AuthProvider";
 import Footer from "./components/Footer";
 import Profile from "./containers/Profile";
 import { Toaster } from "react-hot-toast";
@@ -50,6 +44,7 @@ function App() {
       <footer>
         <Footer />
       </footer>
+      <Toaster />
     </div>
   );
 }
