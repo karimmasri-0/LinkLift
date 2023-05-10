@@ -1,27 +1,18 @@
 import React from "react";
-import axios from "axios";
+import { FaArrowRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function SectionThree() {
-  const checkToken = async () => {
-    const response = await axios.post(
-      `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/check-token`,
-      {
-        token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzNjZDFiYmM3ZDcxMmMyOTlkMTBjMCIsImlhdCI6MTY4MTExNjQ0MywiZXhwIjoxNjgzNzA4NDQzfQ.ANxDMgBiJheJUfziW4Y9fQyzGibKJDStJRt7e9TARM4",
-      }
-    );
-    console.log(response);
-  };
   return (
-    <div className="h-72">
-      <div className="flex justify-center">
-        <button
-          className="bg-green-400 px-4 py-2 rounded text-white"
-          onClick={() => checkToken()}
-        >
-          Post Token
-        </button>
-      </div>
+    <div className="md:flex items-center justify-center gap-24 p-24">
+      <Link className="hover:scale-105 transition-all flex w-full items-center justify-between border-b border-black font-bold py-12 hover:opacity-60">
+        <div className="text-3xl">Sign up to drive</div>
+        <FaArrowRight size={30} />
+      </Link>
+      <Link className="hover:scale-105 transition-all flex items-center justify-between border-b border-black w-full font-bold py-12 hover:opacity-60">
+        <div className="text-3xl ">Sign up to ride</div>
+        <FaArrowRight size={30} />
+      </Link>
     </div>
   );
 }

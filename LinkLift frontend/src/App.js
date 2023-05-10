@@ -12,6 +12,7 @@ import PublishRide from "./containers/PublishRide";
 import Footer from "./components/Footer";
 import Profile from "./containers/Profile";
 import { Toaster } from "react-hot-toast";
+import Logout from "./containers/Logout";
 
 function App() {
   const searchRef = useRef(null);
@@ -38,6 +39,7 @@ function App() {
           <Route path="search" element={<Search />} />
           <Route path="publish-ride" element={<PublishRide />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="logout" element={<Logout />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

@@ -1,5 +1,4 @@
-// import axios from "axios";
-// import jwtDecode from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import React, { createContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
@@ -16,21 +15,15 @@ function AuthProvider({ children }) {
   const getToken = async () => {
     try {
       if (localStorage.getItem("token")) {
-        setToken(localStorage.getItem("token"));
-        // const tempToken = JSON.parse(localStorage.getItem("token"));
-        // const response = await axios.post(
-        //   `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/check-token`,
-        //   { token: tempToken }
-        // );
-        // if (!response.data.error)
-        //   if (
-        //     jwtDecode(tempToken).exp < Math.floor(new Date().getTime() / 1000)
-        //   ) {
-        //     localStorage.setItem("token", null);
-        //     setToken(null);
-        //   } else {
-        //     setToken(tempToken);
-        //   }
+        const tempToken = localStorage.getItem("token");
+        if (
+          jwtDecode(tempToken).exp < Math.floor(new Date().getTime() / 1000)
+        ) {
+          localStorage.removeItem("token");
+          setToken("");
+        } else {
+          setToken(JSON.parse(tempToken));
+        }
       }
     } catch (error) {
       // console.log("Auth Provider ", error);

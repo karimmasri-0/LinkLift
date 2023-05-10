@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react";
 import driverIcon from "../../assets/driver-icon.png";
 import passengerIcon from "../../assets/passenger-icon.png";
-import { useField } from "formik";
+import FormWrapper from "./FormWrapper.tsx";
 
-function DriverForm({ ...props }) {
-  const [field, meta, helpers] = useField(props);
-  const [position, setPosition] = useState("");
+function DriverForm({ updateData }) {
+  const [position, setPosition] = useState();
   useEffect(() => {
     console.log(position);
-    console.log(field);
   }, [position]);
 
   return (
-    <>
-      <div class="mt-6 mb-0 text-lg text-red-500 transition-all">
-        {meta.touched && meta.error ? meta.error : null}
-      </div>
-      <div className="flex gap-6 ">
+    <FormWrapper title={"What are you applying for?"}>
+      <div className="flex gap-6 my-8">
         <div
           className={`relative rounded-xl transition-all ${
             position === "Driver"
@@ -25,7 +20,7 @@ function DriverForm({ ...props }) {
           }`}
           onClick={() => {
             setPosition("Driver");
-            helpers.setValue("Driver");
+            updateData({ position: position });
           }}
         >
           <h2
@@ -37,9 +32,7 @@ function DriverForm({ ...props }) {
           >
             Driver
           </h2>
-          <div className="grid place-items-center">
-            <img src={driverIcon} alt="Driver" className="mt-2 p-5 " />
-          </div>
+          <img src={driverIcon} alt="Driver" className="p-5 " />
         </div>
         <div
           className={`relative rounded-xl transition-all ${
@@ -49,7 +42,7 @@ function DriverForm({ ...props }) {
           }`}
           onClick={() => {
             setPosition("Passenger");
-            helpers.setValue("Passenger");
+            updateData({ position: position });
           }}
         >
           <h2
@@ -61,12 +54,10 @@ function DriverForm({ ...props }) {
           >
             Passenger
           </h2>
-          <div className="grid place-items-center">
-            <img src={passengerIcon} alt="Driver" className="mt-2 p-5" />
-          </div>
+          <img src={passengerIcon} alt="Driver" className="p-5" />
         </div>
       </div>
-    </>
+    </FormWrapper>
   );
 }
 

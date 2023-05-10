@@ -11,10 +11,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ProfileFileInput from "./ProfileFileInput";
 import { MdOutlineCameraswitch } from "react-icons/md";
-import { useMediaQuery } from "react-responsive";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [userData, setUserData] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [certificateImageURL, setCertificateImageURL] = useState("");
@@ -32,14 +33,21 @@ function Profile() {
     "image/png",
     "image/webp",
   ];
-  const sm = useMediaQuery({ query: "(min-width: 640px)" });
-  const postData = async (values) => {
+  useEffect(() => {
+    if (!token) return navigate("/");
+  }, [token]);
+
+  const postData = async (formData) => {
     await axios.post(
       `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/update-user`,
+      formData,
       {
-        token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzY5NDQyNzhkYWYzM2MyODM5OGI2YyIsImlhdCI6MTY4MTI5ODQ5OCwiZXhwIjoxNjgzODkwNDk4fQ.VnWEcKzG8qJ3-jjFKKp5BIcZRTXi_hDLy0RFJIk8T4w",
-        data: { ...values },
+        headers: {
+          token: token,
+          accept: "application/json",
+          "Accept-Language": "en-US,en;q=0.8",
+          "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+        },
       }
     );
   };
@@ -51,8 +59,6 @@ function Profile() {
       email: "",
       phone: "",
       gender: "--Gender--",
-      // password: "",
-      // confirmPassword: "",
       position: "--Position--",
       picture: "",
       age: "",
@@ -81,7 +87,6 @@ function Profile() {
         .max(20, "First name must be less than 20 characters long")
         .required("First Name required"),
       lastName: Yup.string()
-        .required("required")
         .min(3, "must be at least 3 characters long")
         .max(20, "must be less than 20 characters long")
         .required("Last Name required"),
@@ -99,18 +104,14 @@ function Profile() {
         ),
       email: Yup.string()
         .email()
-        .min(8, "must be at least 8 characters long")
+        .min(8, "Email must be at least 8 characters long")
         .required("Email required"),
       phone: Yup.number()
         .positive()
         .integer()
         .min(8, "must be at least 8 characters long"),
-      gender: Yup.string(),
-      // password: Yup.string().min(6, "must be at least 6 characters long"),
-      // confirmPassword: Yup.string()
-      //   .min(6, "must be at least 6 characters long")
-      //   .oneOf([Yup.ref("password")], "Password did not match."),
-      position: Yup.string(),
+      gender: Yup.string().required("Gender required"),
+      position: Yup.string().required("Position required"),
       age: Yup.number("Age must be a number")
         .typeError("Age must be a number")
         .positive("Age must be a number")
@@ -167,31 +168,27 @@ function Profile() {
           formData.append(key, values[key]);
         }
       }
-      await axios
-        .post(
-          `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/update-user`,
-          formData,
-          {
-            headers: {
-              token:
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzY5NDQyNzhkYWYzM2MyODM5OGI2YyIsImlhdCI6MTY4MTI5ODQ5OCwiZXhwIjoxNjgzODkwNDk4fQ.VnWEcKzG8qJ3-jjFKKp5BIcZRTXi_hDLy0RFJIk8T4w",
-              accept: "application/json",
-              "Accept-Language": "en-US,en;q=0.8",
-              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-            },
-          }
-        )
-        .then((resp) => {
-          console.log(resp.data.user_data);
-          localStorage.setItem(
-            "user_data",
-            JSON.stringify(resp.data.user_data)
-          );
-        })
-        .catch((error) => console.log(error));
+
+      toast.promise(
+        postData(formData),
+        {
+          loading: "Loading",
+          success: () => {
+            setTimeout(() => {
+              navigate("/");
+            }, 1500);
+            return "Successfully saved";
+          },
+          error: (err) => `${err.response.data.message}`,
+        },
+        {
+          success: {
+            duration: 3000,
+          },
+        }
+      );
     },
   });
-
   const readImage = (value, setValue, fieldValue) => {
     try {
       if (value) {
@@ -217,12 +214,10 @@ function Profile() {
         `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/user`,
         {
           headers: {
-            token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzY5NDQyNzhkYWYzM2MyODM5OGI2YyIsImlhdCI6MTY4MTI5ODQ5OCwiZXhwIjoxNjgzODkwNDk4fQ.VnWEcKzG8qJ3-jjFKKp5BIcZRTXi_hDLy0RFJIk8T4w",
+            token: token,
           },
         }
       );
-      console.log(response.data.user_data);
       setUserData(response.data.user_data);
       formik.values.firstName = response.data.user_data.first_name;
       formik.values.lastName = response.data.user_data.last_name;

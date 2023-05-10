@@ -66,7 +66,7 @@ const SearchForm = forwardRef((props, ref) => {
         <div className=" flex items-center justify-center " ref={ref}>
           <form
             onSubmit={submitSearch}
-            className="w-11/12 flex items-center justify-center rounded-l-full lg:rounded-r-full shadow-2xl bg-gray-200"
+            className="w-11/12 flex items-center justify-center rounded-l-full rounded-r-full shadow-2xl bg-gray-200"
           >
             <div className="w-4/12 flex items-center gap-1 bg-grey-200 px-4 py-2 bg-gray-200 rounded-l-full">
               <HiLocationMarker
@@ -76,7 +76,7 @@ const SearchForm = forwardRef((props, ref) => {
               <input
                 type={"text"}
                 placeholder="Leaving from ..."
-                className="bg-transparent outline-transparent border-none p-2"
+                className="bg-transparent outline-transparent border-none w-full p-2"
               />
             </div>
             <div className="w-4/12 flex items-center gap-1 bg-grey-200 px-4 py-2 bg-gray-200">
@@ -84,14 +84,14 @@ const SearchForm = forwardRef((props, ref) => {
               <input
                 type={"text"}
                 placeholder="Going to ..."
-                className="bg-transparent outline-transparent border-none p-2"
+                className="bg-transparent outline-transparent w-full border-none p-2"
               />
             </div>
             <div className="w-3/12 flex items-center bg-grey-200 px-4 py-2 bg-gray-200">
               <input
                 type={"date"}
                 placeholder="Date"
-                className="bg-transparent outline-transparent border-none text-cblue-100 p-2"
+                className="bg-transparent outline-transparent border-none w-full text-cblue-100 p-2"
               />
             </div>
             <div className="w-2/12 flex items-center gap-1 bg-gray-200 px-4 py-2 mr-10">

@@ -1,183 +1,96 @@
-import React, { useContext, useState } from "react";
-import AddressForm from "./AddressForm";
-import AgeForm from "./AgeForm";
-import EmailForm from "./EmailForm";
-import GenderForm from "./GenderForm";
-import NameForm from "./NameForm";
-import { useMultistepForm } from "./useMultistepForm.ts";
-import { Link, useNavigate } from "react-router-dom";
-import Password from "./Password";
-import axios from "axios";
+import React from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import FormikWrapper from "./FormikWrapper";
+import FormikStep from "./FormikStep";
+import TextInput from "./TextInput";
 import DriverForm from "./DriverForm";
-import PhoneNumberForm from "./PhoneNumberForm";
-import { AuthContext } from "../../providers/AuthProvider";
-import { GoogleLogin } from "@react-oauth/google";
+import GenderForm from "./GenderForm";
 
 const Register = () => {
-  const navigate = useNavigate();
-  const { getToken } = useContext(AuthContext);
-
-  const handleGoogleSuccessCallback = async (response) => {
-    const res = await axios.post(
-      `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/google-login`,
-      { googleCredentialResponse: response.credential }
-    );
-    console.log(response);
-    if (res.status === 201) {
-      localStorage.setItem("token", JSON.stringify(res.data.token));
-      localStorage.setItem("user_data", JSON.stringify(res.data.data));
-      getToken();
-      navigate("/");
-    }
-  };
-
-  const handleGoogleFailedCallback = (error) => {
-    console.log(error);
-  };
-
-  const [data, setData] = useState({
-    first_name: "",
-    last_name: "",
-    age: "",
-    gender: "",
-    address: "",
-    email: "",
-    password: "",
-    password_confirm: "",
-    phone_number: "",
-    position: "",
-  });
-  const updateData = (newData) => {
-    setData((oldData) => {
-      return { ...oldData, ...newData };
-    });
-  };
-  const { currentStepIndex, step, steps, isFirstStep, isLastStep, back, next } =
-    useMultistepForm([
-      <EmailForm {...data} updateData={updateData} />,
-      <NameForm {...data} updateData={updateData} />,
-      <PhoneNumberForm {...data} updateData={updateData} />,
-      <AgeForm {...data} updateData={updateData} />,
-      <GenderForm {...data} updateData={updateData} />,
-      <DriverForm {...data} updateData={updateData} />,
-      <AddressForm {...data} updateData={updateData} />,
-      <Password {...data} updateData={updateData} />,
-    ]);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!isLastStep) {
-      if (currentStepIndex === 0 && data.email) {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(data.email)) return;
-      }
-      if (currentStepIndex === 2)
-        if (
-          !data.phone_number ||
-          !/^[0-9]+$/.test(data.phone_number) ||
-          data.phone_number.length < 8 ||
-          data.phone_number.length > 12
-        )
-          return;
-
-      if (currentStepIndex === 3 && !data.age) return;
-      if (currentStepIndex === 4 && !data.gender) return;
-      if (currentStepIndex === 5 && data.password !== data.password_confirm)
-        return;
-
-      next();
-    } else {
-      console.warn("Finished setting up");
-      const postresult = await axios.post(
-        `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/register`,
-        { ...data }
-      );
-      console.log(postresult);
-      if (!postresult.data.error) {
-        localStorage.setItem("token", JSON.stringify(postresult.data.token));
-        getToken();
-        navigate("/");
-      }
-    }
-  };
-
   return (
-    <>
-      <div className="flex justify-center">
-        <div className="px-6 mt-10 relative sm:w-2/3 md:w-3/6 lg:w-1/2">
-          <div className="flex justify-between items-center ">
-            <div></div>
-            <div className="text-sm text-gray-500 mt-2">
-              {currentStepIndex + 1}/{steps.length}
-            </div>
-          </div>
-          <form onSubmit={handleSubmit}>
-            {step}
-            {isLastStep && (
-              <button
-                type={"submit"}
-                className="w-full py-2 my-5 rounded text-white bg-cblue-100 hover:shadow"
-              >
-                Create account
-              </button>
-            )}
-            {isFirstStep && (
-              <div className="flex text-sm text-gray-500 -mt-4">
-                <div className="mr-1">Already a member? </div>
-                <Link
-                  to={"auth/login"}
-                  className=" italic hover:text-cblue-100 hover:underline cursor-pointer"
-                >
-                  Login
-                </Link>
-              </div>
-            )}
-            <div className="flex justify-between items-center">
-              <button
-                type={"button"}
-                disabled={isFirstStep}
-                className={`px-4 py-2 bg-gray-400 text-white rounded-lg ${
-                  isFirstStep && "opacity-0 cursor-default"
-                }`}
-                onClick={back}
-              >
-                Back
-              </button>
-              <button
-                type={"submit"}
-                disabled={isLastStep}
-                className={`px-4 py-2 bg-cblue-100 text-white rounded-lg ${
-                  isLastStep && "opacity-0 cursor-default "
-                }`}
-              >
-                Next
-              </button>
-            </div>
-          </form>
-          <div className="flex flex-row items-center my-10">
-            <div className="border border-gray-300 w-full mt-1 border-b"></div>
-            <div className="text-gray-400">or</div>
-            <div className="border border-gray-300 w-full mt-1 border-b"></div>
-          </div>
-          <div className="flex justify-center mt-5 mb-28">
-            {/* <button
-            onClick={googleLogin}
-            className="px-8 py-3 text-gray-800 shadow-lg rounded-lg flex items-center gap-2 justify-center mt-5 mb-28  border border-cblue-100 hover:bg-cblue-100 hover:border-red-200 hover:text-white "
+    <section className="flex justify-center">
+      <div className="px-6 mt-10 relative sm:w-2/3 md:w-3/6 lg:w-1/2">
+        <FormikWrapper
+          initialValues={{
+            first_name: "",
+            last_name: "",
+            email: "",
+            gender: "",
+            password: "",
+            confirmPassword: "",
+            position: "",
+          }}
+          onSubmit={() => {}}
+        >
+          <FormikStep
+            title="What's your name?"
+            validationSchema={Yup.object().shape({
+              first_name: Yup.string()
+                .min(3, "First name must be at least 3 characters long")
+                .max(20, "First name must be less than 20 characters long")
+                .required("First Name required"),
+              last_name: Yup.string()
+                .min(3, "Last name must be at least 3 characters long")
+                .max(20, "Last name must be less than 20 characters long")
+                .required("Last Name required"),
+            })}
           >
-            Sign in with google
-            <FcGoogle size={22} />
-          </button> */}
-            <GoogleLogin
-              onSuccess={(response) => {
-                handleGoogleSuccessCallback(response);
-              }}
-              onError={(error) => {
-                handleGoogleFailedCallback(error);
-              }}
+            <TextInput name="first_name" type="text" label="First name" />
+            <TextInput name="last_name" type="text" label="Last name" />
+          </FormikStep>
+
+          <FormikStep
+            title={"Your first step into carpooling! What are you offering?"}
+            validationSchema={Yup.object().shape({
+              position: Yup.string().required("Position required"),
+            })}
+          >
+            <DriverForm name="position" />
+          </FormikStep>
+
+          <FormikStep
+            title={"What is your Email?"}
+            validationSchema={Yup.object().shape({
+              email: Yup.string()
+                .email("Invalid email format")
+                .required("Email required"),
+            })}
+          >
+            <TextInput name="email" type="email" label="Email" />
+          </FormikStep>
+
+          <FormikStep
+            title={"What is your gender identity?"}
+            validationSchema={Yup.object().shape({
+              gender: Yup.string().required("Gender required"),
+            })}
+          >
+            <GenderForm name="gender" />
+          </FormikStep>
+
+          <FormikStep
+            title={"Choose a secure password"}
+            validationSchema={Yup.object().shape({
+              password: Yup.string()
+                .min(6, "Password must be at least 6 characters long")
+                .required("Password required"),
+              confirmPassword: Yup.string()
+                .min(6, "Password must be at least 6 characters long")
+                .oneOf([Yup.ref("password")], "Password did not match")
+                .required("Password did not match"),
+            })}
+          >
+            <TextInput name="password" type="password" label={"Password"} />
+            <TextInput
+              name="confirmPassword"
+              type="password"
+              label={"Confirm Password"}
             />
-          </div>
-        </div>
+          </FormikStep>
+        </FormikWrapper>
       </div>
-    </>
+    </section>
   );
 };
 

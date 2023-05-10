@@ -6,9 +6,9 @@ import { CgCopyright } from "react-icons/cg";
 
 function Footer() {
   return (
-    <footer className="bg-[#606060] pt-8 px-4 shadow-3xl font-lato">
-      <div className="md:flex md:items-start md:gap-20 m-4">
-        <div className="text-gray-200 max-w-md">
+    <footer className="bg-[#606060] pt-12 px-4 shadow-3xl font-lato">
+      <div className="flex items-start pb-4 flex-wrap gap-20 m-2 sm:m-4">
+        <div className="flex-initial text-gray-200 max-w-md">
           <img src={logo} alt="LinkLift Logo" className="w-48 " />
           <p className="px-6 py-4">
             It's a small step for you, but a giant leap for the planet. Join now
@@ -18,65 +18,86 @@ function Footer() {
             <Link
               to="https://www.facebook.com/"
               targte="_blank"
-              className="bg-[#707070] rounded-xl p-2 shadow-md hover:shadow-lg shadow-[#606060]/20 hover:shadow-[#505050]/40"
+              className="group focus:opacity-[0.85] bg-[#707070] hover:bg-cblue-300 transition-all hover:text-gray-[#707070] rounded-xl p-2 shadow-md hover:shadow-lg shadow-[#707070]/20 hover:shadow-[#505050] "
             >
-              <GrFacebook className="text-cblue-300" size={18} />
+              <GrFacebook
+                className="text-cblue-300 group-hover:text-[#707070]"
+                size={18}
+              />
             </Link>
             <Link
               to="https://www.instagram.com/"
               target="_blank"
-              className="bg-[#707070] rounded-xl p-2 shadow-md hover:shadow-lg shadow-[#606060]/20 hover:shadow-[#505050]/40"
+              className="group focus:opacity-[0.85] bg-[#707070] hover:bg-cblue-300 transition-all hover:text-gray-[#707070] rounded-xl p-2 shadow-md hover:shadow-lg shadow-[#707070]/20 hover:shadow-[#505050] "
             >
-              <GrInstagram className="text-cblue-300" size={18} />
+              <GrInstagram
+                className="text-cblue-300 group-hover:text-[#707070]"
+                size={18}
+              />
             </Link>
             <Link
               to="https://twitter.com/"
               target="_blank"
-              className="bg-[#707070] rounded-xl p-2 shadow-md hover:shadow-lg shadow-[#606060]/20 hover:shadow-[#505050]/40"
+              className="group focus:opacity-[0.85] bg-[#707070] hover:bg-cblue-300 transition-all hover:text-gray-[#707070] rounded-xl p-2 shadow-md hover:shadow-lg shadow-[#707070]/20 hover:shadow-[#505050] "
             >
-              <GrTwitter className="text-cblue-300" size={18} />
+              <GrTwitter
+                className="text-cblue-300 group-hover:text-[#707070]"
+                size={18}
+              />
             </Link>
           </div>
         </div>
-        {/* <div className="flex items-start gap-20"> */}
-        <div className="text-gray-200 pt-10">
-          <h3 className="text-xl pb-3 text-white font-semibold">
+        <div className="pt-2">
+          <h3 className="text-xl pb-3 text-white font-semibold uppercase">
             All directories
           </h3>
-          <ul className="">
-            <li className="py-2 w-fit hover:underline cursor-pointer">
-              All carpool routes
+          <ul className="py-2 ml-1 text-gray-400 space-y-4 w-fit cursor-pointer">
+            <li className="border-b-2 border-[#606060] transition-all hover:border-cblue-200 w-fit">
+              <Link to="">All carpool routes</Link>
             </li>
-            <li className="py-2 w-fit hover:underline cursor-pointer">
-              All carpool destinations
+            <li className="border-b-2 border-[#606060] transition-all hover:border-cblue-200 w-fit">
+              <Link to="">All carpool destinations</Link>
             </li>
-            <li className="py-2 w-fit hover:underline cursor-pointer">
-              All bus routes
+            <li className="border-b-2 border-[#606060] transition-all hover:border-cblue-200 w-fit">
+              <Link to="">All bus routes</Link>
             </li>
-            <li className="py-2 w-fit hover:underline cursor-pointer">
-              All bus destinations
+            <li className="border-b-2 border-[#606060] transition-all hover:border-cblue-200 w-fit">
+              <Link to="">All bus destinations</Link>
             </li>
           </ul>
         </div>
-        <div className="text-white pt-10">
-          <h3 className="text-xl pb-3 text-white font-semibold">About</h3>
-          <ul>
-            <li className="py-2">
-              <Link className="hover:underline" to="how-it-works">
-                How it works
-              </Link>
+        <div className="pt-2">
+          <h3 className="text-xl pb-3 text-white font-semibold uppercase">
+            About
+          </h3>
+          <ul className="py-2 ml-1 text-gray-400 space-y-4 w-fit cursor-pointer">
+            <li className="border-b-2 border-[#606060] transition-all hover:border-cblue-200 w-fit">
+              <Link to="how-it-works">How it works</Link>
             </li>
-            <li className="py-2">
-              <Link className="hover:underline" to="about-us">
-                About Us
-              </Link>
+            <li className="border-b-2 border-[#606060] transition-all hover:border-cblue-200 w-fit">
+              <Link to="about-us">About Us</Link>
             </li>
-            <li className="py-2">
-              <Link className="hover:underline" to="help-center">
-                Help Centre
-              </Link>
+            <li className="border-b-2 border-[#606060] transition-all hover:border-cblue-200 w-fit">
+              <Link to="help-center">Help Centre</Link>
             </li>
           </ul>
+        </div>
+        <div className="pt-2">
+          <h3 className="text-xl pb-3 text-white font-semibold uppercase">
+            Newsletter
+          </h3>
+          <form className="py-2 ml-1 flex gap-4 flex-col">
+            <input
+              type="email"
+              placeholder="Your Email*"
+              className="bg-[#606060] focus:ring-1 focus:ring-cblue-200 transition-all"
+            />
+            <input
+              type="submit"
+              value="Submit"
+              className="bg-cblue-200 w-fit shadow shadow-cblue-200/20 hover:shadow-md hover:shadow-cblue-200/40 text-white px-4 py-2 transition-all focus:opacity-[0.85] cursor-pointer"
+            />
+          </form>
         </div>
         {/* </div> */}
       </div>

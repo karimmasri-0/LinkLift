@@ -5,14 +5,17 @@ const jsonwebtoken = require("jsonwebtoken");
 const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const { ObjectId } = require("mongodb");
-const merge = require("deepmerge");
 
 const decodeToken = async (token) => {
-  const decoded = await promisify(jsonwebtoken.verify)(
-    token,
-    process.env.JWT_SECRET
-  );
-  return decoded.id;
+  try {
+    const decoded = await promisify(jsonwebtoken.verify)(
+      token,
+      process.env.JWT_SECRET
+    );
+    return new ObjectId(decoded.id);
+  } catch (error) {
+    console.log(error);
+  }
 };
 const signToken = (id) => {
   return jsonwebtoken.sign({ id }, process.env.JWT_SECRET, {
@@ -22,9 +25,8 @@ const signToken = (id) => {
 const createAndSendToken = (user, res, statusCode) => {
   const token = signToken(user._id);
   return res.status(statusCode).json({
-    error: false,
     token,
-    data: { user },
+    role: user.position,
   });
 };
 
@@ -184,7 +186,7 @@ exports.googleLogin = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const id = new ObjectId(await decodeToken(req.headers.token));
+    const id = await decodeToken(req.headers.token);
     console.log(
       "////////////////////////////////////////",
       id,
@@ -237,7 +239,7 @@ exports.updateUser = async (req, res, namesArray) => {
     updateUser.position = req.body.position;
     if (req.body.phone) updateUser.phone_number = req.body.phone;
     if (
-      req.body.firsName &&
+      req.body.firstName &&
       req.body.lastName &&
       req.body.email &&
       req.body.gender &&

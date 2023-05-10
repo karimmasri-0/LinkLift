@@ -125,48 +125,42 @@ const SearchForm = forwardRef((props, ref) => {
               onSubmit={submitSearch}
               className="flex flex-col rounded-xl border-3 border-red-500 shadow-xl w-10/12 bg-gray-200"
             >
-              <div className=" px-4">
-                <div className=" py-2 mt-2 flex items-center border-b border-gray-300">
-                  <HiLocationMarker className="mx-2 text-cblue-100 relative" />
-                  <input
-                    type={"text"}
-                    placeholder="Leaving from ..."
-                    className="bg-transparent outline-transparent py-2 border-none "
-                  />
-                </div>
+              <div className="  px-4 py-2 mt-2 flex items-center border-b border-gray-300">
+                <HiLocationMarker className="mx-2 text-cblue-100 relative" />
+                <input
+                  type={"text"}
+                  placeholder="Leaving from ..."
+                  className="bg-transparent outline-transparent py-2 border-none "
+                />
               </div>
-              <div className="px-4">
-                <div className=" py-2 mt-2 flex items-center border-b border-gray-300">
-                  <HiLocationMarker className="mx-2 text-cblue-100 relative" />
-                  <input
-                    type={"text"}
-                    placeholder="Leaving from ..."
-                    className="bg-transparent outline-transparent py-2 border-none"
-                  />
-                </div>
+              <div className=" px-4 py-2 mt-2 flex items-center border-b border-gray-300">
+                <HiLocationMarker className="mx-2 text-cblue-100 relative" />
+                <input
+                  type={"text"}
+                  placeholder="Leaving from ..."
+                  className="bg-transparent outline-transparent py-2 border-none"
+                />
               </div>
-              <div className="px-4">
-                <div className=" py-2 mt-2 flex items-center border-b border-gray-300">
-                  <BsFillCalendarWeekFill className="mx-2 text-cblue-100 " />
-                  <div>
-                    <div ref={popperRef}>
-                      <input
-                        type="text"
-                        placeholder={format(new Date(), "y-MM-dd")}
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        className="input-reset pa2 ma2 bg-white black ba w-28 border-none"
-                      />
-                      <button
-                        ref={buttonRef}
-                        type="button"
-                        className="p-2 bg-white rdp-button_reset ba"
-                        aria-label="Pick a date"
-                        onClick={handleButtonClick}
-                      >
-                        <BsCalendarPlus className=" text-red-200 relative" />
-                      </button>
-                    </div>
+              <div className=" px-4 py-2 mt-2 flex items-center border-b border-gray-300">
+                <BsFillCalendarWeekFill className="mx-2 text-cblue-100 " />
+                <div>
+                  <div ref={popperRef}>
+                    <input
+                      type="text"
+                      placeholder={format(new Date(), "y-MM-dd")}
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      className="input-reset pa2 ma2 bg-gray-200 black ba w-28 border-none"
+                    />
+                    <button
+                      ref={buttonRef}
+                      type="button"
+                      className="p-2 bg-white rdp-button_reset ba"
+                      aria-label="Pick a date"
+                      onClick={handleButtonClick}
+                    >
+                      <BsCalendarPlus className=" text-red-200 relative" />
+                    </button>
                     {isPopperOpen && (
                       <FocusTrap
                         active
@@ -202,7 +196,7 @@ const SearchForm = forwardRef((props, ref) => {
               <input
                 type="submit"
                 value={"Search"}
-                className="py-2 text-white bg-cblue-100 rounded-b-xl hover:shadow-blue-gray-500"
+                className="py-2 text-white bg-cblue-100 rounded-b-xl cursor-pointer font-bold shadow-gray-900/20 hover:shadow-red-400/100 transition-all focus:opacity-[0.85] focus:shadow-none "
               />
             </form>
           </div>

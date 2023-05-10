@@ -1,11 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BiSearchAlt } from "react-icons/bi";
 import { CgAdd } from "react-icons/cg";
 import { FaRegUserCircle } from "react-icons/fa";
 import {
-  FloatingArrow,
   FloatingFocusManager,
   FloatingOverlay,
   arrow,
@@ -19,8 +18,10 @@ import {
   useInteractions,
   useRole,
 } from "@floating-ui/react";
+import { AuthContext } from "../../providers/AuthProvider";
 
 const Header = ({ scrollToSearch }) => {
+  const { token } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const goToSearch = () => {
@@ -67,53 +68,61 @@ const Header = ({ scrollToSearch }) => {
             <span className="hidden sm:block ">Search</span>
           </button>
         </li>
-        <li>
-          <button
-            className=" bg-red-200 px-4 py-2 rounded-md text-white flex items-center"
-            onClick={goToPublishRide}
-          >
-            <CgAdd className="md:mr-2" size={22} />
-            <span className="hidden sm:block text-lg">Pulish a ride</span>
-          </button>
-        </li>
-        <li>
-          <button ref={refs.setReference} {...getReferenceProps()}>
-            <FaRegUserCircle
-              className="rounded-full bg-gray-300 text-gray-700"
-              size={44}
-            />
-          </button>
-          {isOpen && (
-            <FloatingOverlay>
-              {/* <div> */}
-              <FloatingFocusManager context={context} modal={false}>
-                <div
-                  ref={refs.setFloating}
-                  style={{
-                    position: strategy,
-                    top: y ?? 0,
-                    left: x ?? 0,
-                    // width: "max-content",
-                  }}
-                  className="flex flex-col rounded-md py-2 bg-gray-200 shadow-md"
-                  {...getFloatingProps()}
-                >
-                  <Link to="profile" className="px-4  pr-20">
-                    Profile
-                  </Link>
-                  <div className=" border-b border-black"></div>
-                  <Link to="logout" className="px-4  pr-20">
-                    Logout
-                  </Link>
-                </div>
-                {/* <FloatingArrow ref={arrowRef} context={context} fill="red" /> */}
-              </FloatingFocusManager>
-              {/* </div> */}
-            </FloatingOverlay>
-          )}
+        {
+          <li>
+            <button
+              className=" bg-red-200 px-4 py-2 rounded-md text-white flex items-center"
+              onClick={goToPublishRide}
+            >
+              <CgAdd className="md:mr-2" size={22} />
+              <span className="hidden sm:block text-lg">Pulish a ride</span>
+            </button>
+          </li>
+        }
+        {token && (
+          <li>
+            <button ref={refs.setReference} {...getReferenceProps()}>
+              <FaRegUserCircle
+                className="rounded-full bg-gray-300 text-gray-700"
+                size={44}
+              />
+            </button>
+            {isOpen && (
+              <FloatingOverlay>
+                {/* <div> */}
+                <FloatingFocusManager context={context} modal={false}>
+                  <ul
+                    ref={refs.setFloating}
+                    style={{
+                      position: strategy,
+                      top: y ?? 0,
+                      left: x ?? 0,
+                      // width: "10rem",
+                    }}
+                    className="w-44 flex flex-col rounded-md bg-gray-200 shadow-md "
+                    {...getFloatingProps()}
+                  >
+                    <li className="hover:bg-cblue-100 hover:text-white transition-all rounded-t-md">
+                      <Link to="/profile" className="px-3 py-1 block w-full">
+                        Profile
+                      </Link>
+                    </li>
+                    <div className="border-b border-black"></div>
+                    <li className="hover:bg-cblue-100 hover:text-white transition-all rounded-b-md">
+                      <Link to="/logout" className="px-3 py-1 block w-full">
+                        Logout
+                      </Link>
+                    </li>
+                  </ul>
+                  {/* <FloatingArrow ref={arrowRef} context={context} fill="red" /> */}
+                </FloatingFocusManager>
+                {/* </div> */}
+              </FloatingOverlay>
+            )}
 
-          {/* </Link> */}
-        </li>
+            {/* </Link> */}
+          </li>
+        )}
       </ul>
     </nav>
   );

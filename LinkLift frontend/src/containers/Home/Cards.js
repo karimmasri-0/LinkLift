@@ -7,8 +7,8 @@ const Cards = () => {
   return (
     <section className="py-16 px-12 text-center md:grid md:grid-cols-4 lg:grid-cols-3">
       <div className="relative p-5 md:col-span-2 lg:col-span-1">
-        <div className="h-52 my-2 py-3 px-6 shadow-lg rounded-lg flex flex-col items-center border-2 border-cblue-100">
-          <div className="bg-cblue-100 rounded-full w-14 h-14 absolute top-0 grid place-content-center">
+        <div className="h-52 my-2 py-3 px-6 shadow-lg rounded-lg flex flex-col items-center border-2 border-cblue-200">
+          <div className="bg-cblue-200 rounded-full w-14 h-14 absolute top-0 grid place-content-center">
             <SiLeaderprice size={32} className="" />
           </div>
           <div className="m-auto overflow-x-hidden overflow-y-auto">
@@ -18,8 +18,8 @@ const Cards = () => {
         </div>
       </div>
       <div className="relative p-5 md:col-span-2 lg:col-span-1">
-        <div className="h-52 my-2 py-3 px-6 shadow-lg rounded-lg flex flex-col items-center border-2 border-cblue-100">
-          <div className="bg-cblue-100 rounded-full w-14 h-14 absolute top-0 grid place-content-center">
+        <div className="h-52 my-2 py-3 px-6 shadow-lg rounded-lg flex flex-col items-center border-2 border-cblue-200">
+          <div className="bg-cblue-200 rounded-full w-14 h-14 absolute top-0 grid place-content-center">
             <MdOutlineSafetyDivider size={32} className="" />
           </div>
           <div className="m-auto overflow-x-hidden overflow-y-auto">
@@ -30,8 +30,8 @@ const Cards = () => {
         </div>
       </div>
       <div className="relative p-5 md:col-span-2 md:col-start-2 lg:col-span-1">
-        <div className="h-52 my-2 py-3 px-6 shadow-lg rounded-lg flex flex-col items-center border-2 border-cblue-100">
-          <div className="bg-cblue-100 rounded-full w-14 h-14 absolute top-0 grid place-content-center">
+        <div className="h-52 my-2 py-3 px-6 shadow-lg rounded-lg flex flex-col items-center border-2 border-cblue-200">
+          <div className="bg-cblue-200 rounded-full w-14 h-14 absolute top-0 grid place-content-center">
             <FaRoute size={32} className="" />
           </div>
           <div className="m-auto overflow-x-hidden overflow-y-auto">

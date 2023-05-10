@@ -4,7 +4,7 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/dist/css/themes/splide-default.min.css";
 import { useMediaQuery } from "react-responsive";
 import { Grid } from "@splidejs/splide-extension-grid";
-import review from "../../assets/review.png";
+import review from "../../assets/review-1.png";
 import axios from "axios";
 
 function Reviews() {
@@ -16,7 +16,7 @@ function Reviews() {
       );
       if (!reviews.data.error) setReviews(reviews.data.data);
     } catch (error) {
-      console.log("catch error", error);
+      console.log("reviews catch error", error);
     }
   };
 
@@ -26,7 +26,7 @@ function Reviews() {
   const md = useMediaQuery({ query: "(min-width: 768px)" });
 
   return (
-    <div className="py-8 px-4 flex flex-col items-center bg-cblue-100 md:flex-row justify-around">
+    <div className="py-8 px-4 flex flex-col items-center bg-cblue-200 md:flex-row justify-around">
       <img
         src={review}
         className="w-2/3 min-w-[250px] max-w-3xl mb-8 order-first md:order-last md:w-1/2 lg:w-2/5 md:mb-0"

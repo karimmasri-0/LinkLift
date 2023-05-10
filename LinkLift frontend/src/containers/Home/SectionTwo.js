@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const SectionTwo = () => {
   const navigate = useNavigate();
   return (
-    <section className="bg-cblue-100 py-8 px-16 flex flex-col justify-around items-center md:flex-row gap-8">
+    <section className=" bg-gradient-to-tr from-cblue-300 to-cblue-100 py-8 px-16 flex flex-col justify-around items-center md:flex-row gap-8">
       <img
         src={image}
         className="w-2/3 min-w-[250px] max-w-3xl md:w-1/2 lg:w-2/5 lg:py-6 lg:px-6"
@@ -27,7 +27,7 @@ const SectionTwo = () => {
           onClick={() => {
             navigate("about");
           }}
-          className="px-4 py-2 bg-white rounded text-black flex gap-1 items-center my-4 hover:text-cblue-200 shadow-md hover:shadow-ld shadow-cblue-400/20 hover:shadow-cblue-400/40 focus:opacity-[0.85] focus:shadow-none"
+          className="px-4 py-2 bg-white rounded text-black flex gap-1 items-center my-4 hover:text-cblue-200 shadow-md hover:shadow-lg shadow-cblue-400/20 hover:shadow-cblue-400/40 focus:opacity-[0.85] focus:shadow-none transition-all"
         >
           Explore more
           <AiOutlineArrowRight />
