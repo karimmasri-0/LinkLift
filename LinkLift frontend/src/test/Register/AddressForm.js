@@ -1,6 +1,6 @@
 import React from "react";
 import FormWrapper from "./FormWrapper.tsx";
-import InputField from "../../components/InputField";
+import InputField from "../InputField.js";
 
 function AddressForm({ address, updateData }) {
   return (

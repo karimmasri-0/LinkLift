@@ -26,7 +26,7 @@ const createAndSendToken = (user, res, statusCode) => {
   const token = signToken(user._id);
   return res.status(statusCode).json({
     token,
-    role: user.position,
+    position: user.position,
   });
 };
 
@@ -39,26 +39,21 @@ exports.signUp = async (req, res) => {
         req.body.email &&
         req.body.password &&
         req.body.password_confirm &&
-        req.body.phone_number &&
         req.body.gender &&
-        req.body.is_driver
+        req.body.position
       )
     ) {
-      return res.status(400).json({ error: true, message: "Invalid request" });
+      return res.status(400).json({ message: "Invalid request" });
     }
     const emailCheck = await User.findOne({ email: req.body.email });
     if (emailCheck) {
-      return res
-        .status(409)
-        .json({ error: true, message: "Email already in use" });
+      return res.status(409).json({ message: "Email already in use" });
     }
     if (!validator.isEmail(req.body.email)) {
-      return res.status(400).json({ error: true, message: "Invalid email" });
+      return res.status(400).json({ message: "Invalid email" });
     }
     if (req.body.password !== req.body.password_confirm) {
-      return res
-        .status(400)
-        .json({ error: true, message: "Password didn't match" });
+      return res.status(400).json({ message: "Password didn't match" });
     }
     const salt = bcrypt.genSaltSync(12);
     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
@@ -68,15 +63,15 @@ exports.signUp = async (req, res) => {
       last_name: req.body.last_name,
       email: req.body.email,
       password: hashedPassword,
-      phone_number: req.body.phone_number,
       gender: req.body.gender,
-      is_driver: req.body.is_driver,
+      position: req.body.position,
       picture: "https://i.imgur.com/Zvno7g3.png",
+      finished_setting_up: req.body.position === "Driver" ? false : true,
     });
     createAndSendToken(newUser, res, 201);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: true, message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

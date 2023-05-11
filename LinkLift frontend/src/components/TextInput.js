@@ -7,7 +7,7 @@ function TextInput({ label, ...props }) {
     <div className={`my-3 ${meta.touched && meta.error && "text-red-400"}`}>
       <label htmlFor={label} className="text-sm">
         {meta.touched && meta.error ? meta.error : label}
-        {/* {required && <span className="text-red-500 ml-1 text-lg">*</span>} */}
+        {props.required && <span className="text-red-500 ml-1 text-lg">*</span>}
       </label>
       <input
         {...field}

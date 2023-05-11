@@ -26,7 +26,7 @@ function Reviews() {
   const md = useMediaQuery({ query: "(min-width: 768px)" });
 
   return (
-    <div className="py-8 px-4 flex flex-col items-center bg-cblue-200 md:flex-row justify-around">
+    <div className="py-8 px-4 md:py-12 flex flex-col items-center bg-cblue-200 md:flex-row justify-around">
       <img
         src={review}
         className="w-2/3 min-w-[250px] max-w-3xl mb-8 order-first md:order-last md:w-1/2 lg:w-2/5 md:mb-0"
@@ -61,7 +61,7 @@ function Reviews() {
           >
             {reviews.map((review) => (
               <SplideSlide key={review.name} className=" flex justify-center">
-                <div className="h-32 pl-6 py-4 border-red-200 w-72 bg-gray-100 shadows rounded-md border-2">
+                <div className="h-32 pl-6 py-4 border-red-200 w-96 bg-gray-100 shadows rounded-md border-2">
                   <div className="flex flex-row w-full">
                     <img
                       src={review.image}

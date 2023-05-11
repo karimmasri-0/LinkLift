@@ -31,6 +31,10 @@ function FormikWrapper({ children, ...props }) {
                 "token",
                 JSON.stringify(postresult.data.token)
               );
+              localStorage.setItem(
+                "position",
+                JSON.stringify(postresult.data.position)
+              );
               getToken();
               navigate("/");
             }
@@ -48,6 +52,7 @@ function FormikWrapper({ children, ...props }) {
           <div className="flex items-center justify-between">
             {step > 0 && (
               <button
+                type="button"
                 className="px-4 py-2 bg-gray-600/70 hover:bg-gray-600/60 text-white rounded-md shadow-md hover:shadow-lg"
                 onClick={() => setStep((step) => step - 1)}
               >

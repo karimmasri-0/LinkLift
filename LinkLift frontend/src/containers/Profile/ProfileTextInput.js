@@ -11,6 +11,7 @@ function ProfileTextInput({
   error,
   touched,
   required = false,
+  large = false,
 }) {
   return (
     <div
@@ -18,7 +19,7 @@ function ProfileTextInput({
         touched && error && "text-red-400"
       }`}
     >
-      <label htmlFor={label} className="text-sm">
+      <label htmlFor={label} className={`${large ? "text-lg" : "text - sm"}`}>
         {touched && error ? error : label}
         {required && <span className="text-red-500 ml-1 text-lg">*</span>}
       </label>

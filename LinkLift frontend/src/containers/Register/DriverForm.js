@@ -13,7 +13,7 @@ function DriverForm({ ...props }) {
 
   return (
     <>
-      <div class="mt-6 mb-0 text-lg text-red-500 transition-all">
+      <div className="mt-6 mb-0 text-lg text-red-500 transition-all">
         {meta.touched && meta.error ? meta.error : null}
       </div>
       <div className="flex gap-6 ">

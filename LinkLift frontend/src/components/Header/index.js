@@ -21,7 +21,8 @@ import {
 import { AuthContext } from "../../providers/AuthProvider";
 
 const Header = ({ scrollToSearch }) => {
-  const { token } = useContext(AuthContext);
+  const { position, token } = useContext(AuthContext);
+  console.log(position);
   const location = useLocation();
   const navigate = useNavigate();
   const goToSearch = () => {
@@ -54,7 +55,7 @@ const Header = ({ scrollToSearch }) => {
   ]);
 
   return (
-    <nav className="font-lato bg-white min-h-[10vh] px-5 py-5 flex justify-between items-center fixed overflow-hidden w-full border-b-2 border-gray-100 z-10">
+    <nav className="font-lato px-10 bg-white min-h-[10vh] py-5 flex justify-between items-center fixed overflow-hidden w-full border-b-2 border-gray-100 z-10">
       <Link to="/">
         <img src={logo} className="w-32" alt="Logo" />
       </Link>
@@ -62,13 +63,13 @@ const Header = ({ scrollToSearch }) => {
         <li>
           <button
             onClick={location.pathname === "/" ? scrollToSearch : goToSearch}
-            className="text-cblue-200 px-4 py-2 flex items-center"
+            className="text-cblue-200 px-2 py-2 flex items-center transition-all border-b-2 border-white hover:border-cblue-200"
           >
             <BiSearchAlt className="mr-2" size={24} />
-            <span className="hidden sm:block ">Search</span>
+            <span className="hidden sm:block text-lg ">Search</span>
           </button>
         </li>
-        {
+        {position === "Driver" && (
           <li>
             <button
               className=" bg-red-200 px-4 py-2 rounded-md text-white flex items-center"
@@ -78,8 +79,8 @@ const Header = ({ scrollToSearch }) => {
               <span className="hidden sm:block text-lg">Pulish a ride</span>
             </button>
           </li>
-        }
-        {token && (
+        )}
+        {token ? (
           <li>
             <button ref={refs.setReference} {...getReferenceProps()}>
               <FaRegUserCircle
@@ -122,6 +123,21 @@ const Header = ({ scrollToSearch }) => {
 
             {/* </Link> */}
           </li>
+        ) : (
+          <div className="space-x-4">
+            <Link
+              to="auth/login"
+              className="px-4 py-2 text-gray-900 hover:bg-gray-200 rounded transition-all hover:shadow-md"
+            >
+              Log in
+            </Link>
+            <Link
+              to="auth/register"
+              className="px-4 py-2 bg-cblue-200 text-white rounded transition-all hover:bg-cblue-200/80 shadow-md hover:shadow-lg"
+            >
+              Sign up
+            </Link>
+          </div>
         )}
       </ul>
     </nav>

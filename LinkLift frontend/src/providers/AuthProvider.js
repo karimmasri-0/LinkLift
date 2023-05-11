@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 function AuthProvider({ children }) {
   const [token, setToken] = useState("");
   const [userData, setUserData] = useState("");
+  const [position, setPosition] = useState("");
 
   useEffect(() => {
     if (!token) getToken();
@@ -25,8 +26,11 @@ function AuthProvider({ children }) {
           setToken(JSON.parse(tempToken));
         }
       }
+      if (localStorage.getItem("position")) {
+        setPosition(localStorage.getItem("role"));
+      }
     } catch (error) {
-      // console.log("Auth Provider ", error);
+      console.log("Auth Provider ", error);
       setToken("");
     }
   };
@@ -41,7 +45,7 @@ function AuthProvider({ children }) {
     }
   };
   return (
-    <AuthContext.Provider value={{ userData, token, getToken }}>
+    <AuthContext.Provider value={{ userData, token, getToken, position }}>
       {children}
     </AuthContext.Provider>
   );

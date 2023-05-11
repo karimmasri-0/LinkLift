@@ -8,7 +8,7 @@ function GenderForm({ ...props }) {
 
   return (
     <>
-      <div class="mt-6 mb-2 text-lg text-red-500 transition-all">
+      <div className="mt-6 mb-2 text-lg text-red-500 transition-all">
         {meta.touched && meta.error ? meta.error : null}
       </div>
       <div

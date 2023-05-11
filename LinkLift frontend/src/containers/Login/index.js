@@ -1,80 +1,62 @@
 import React, { useState } from "react";
-import logo from "../../assets/logo.png";
-import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import InputField from "../../components/InputField";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import ProfileTextInput from "../Profile/ProfileTextInput";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const submitForm = async (e) => {
-    e.preventDefault();
-    console.log(process.env.REACT_APP_IP);
-    const res = await axios.post(
-      `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/api/v1/users/login`,
-      {
-        email: email,
-        password: password,
-      }
-    );
-    console.log(res);
-  };
-
+  const formik = useFormik({
+    initialValues: { email: "", password: "" },
+    validationSchema: Yup.object({
+      email: Yup.string().email("Invalid Email").required("Email required"),
+      password: Yup.string().required("Password required"),
+    }),
+    onsubmit: async (values) => {
+      console.log(values);
+    },
+  });
   return (
-    <>
-      <div className="flex justify-center items-center mt-20">
-        <div className="border-2 rounded-2xl shadow-xl border-cblue-100 pb-5 pt-20 px-12">
-          <div className="grid grid-cols-2 gap-24">
-            <div className="flex justify-center items-center w-fit">
-              <img src={logo} className="w-48" alt="Logo" />
-            </div>
-            <form
-              onSubmit={submitForm}
-              className="flex flex-col items-center justify-center gap-4"
-            >
-              <InputField
-                email={email}
-                setEmail={setEmail}
-                type={"email"}
-                label={"Email"}
-              />
-              <InputField
-                password={password}
-                setPassword={setPassword}
-                type={"password"}
-                label={"Password"}
-              />
-              <button
-                type={"submit"}
-                className="bg-cblue-100 text-white w-full px-4 py-2 rounded"
-              >
-                Login
-              </button>
-              <div className="flex items-center w-fit">
-                <div className="border-b-2 w-24 mt-1"></div>
-                <div className="text-gray-400 h-fit">or</div>
-                <div className="border-b-2 w-24 mt-1"></div>
-              </div>
-              <div className="flex items-center px-3 py-2 shadow-md rounded mt-2">
-                <FcGoogle className="relative mx-3" />
-                <button>Sign in with google</button>
-              </div>
-            </form>
-          </div>
-          <div className="pt-10 text-center text-sm">
-            Don't have account?{" "}
-            <Link
-              to={"/register"}
-              className=" italic underline text-cblue-100 hover:text-cblue-200"
-            >
-              Sign up
-            </Link>
-          </div>
+    <section className="flex min-h-[100vh] items-center -mt-20 justify-center bg-gray-200">
+      <div className="bg-white rounded-lg pb-12 w-96">
+        <div className="relative mb-8 w-full h-12 text-xl font-semibold bg-cblue-200 text-white rounded-t-lg">
+          <h2 className="absolute px-8 pt-2 bg-white rounded-lg text-black top-5 left-5">
+            Log Into LinkLift
+          </h2>
         </div>
+        <form
+          onSubmit={formik.handleSubmit}
+          onReset={formik.handleReset}
+          className="px-8 space-y-6"
+        >
+          <ProfileTextInput
+            label="Email"
+            value={formik.values.email}
+            onChange={formik.handleChange("email")}
+            onBlur={formik.handleBlur("email")}
+            touched={formik.touched.email}
+            error={formik.errors.email}
+            placeholder={"Your Email"}
+            required={true}
+          />
+          <ProfileTextInput
+            label="Password"
+            value={formik.values.password}
+            onChange={formik.handleChange("password")}
+            onBlur={formik.handleBlur("password")}
+            touched={formik.touched.password}
+            error={formik.errors.password}
+            placeholder={"Your Password"}
+            required={true}
+          />
+          <button
+            type="submit"
+            className="w-full py-3 mt-6 rounded-lg text-white shadow-md hover:shadow-lg bg-cblue-200"
+          >
+            Submit
+          </button>
+        </form>
       </div>
-    </>
+    </section>
   );
 };
 
