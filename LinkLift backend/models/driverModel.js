@@ -56,10 +56,10 @@ const driverSchema = new Schema(
         },
       },
     },
-    finished_setting_up: {
-      type: Boolean,
-      required: true,
-    },
+    // finished_setting_up: {
+    //   type: Boolean,
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );

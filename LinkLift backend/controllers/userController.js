@@ -23,15 +23,31 @@ const signToken = (id) => {
   });
 };
 const createAndSendToken = (user, res, statusCode) => {
+  console.log(user);
   const token = signToken(user._id);
   return res.status(statusCode).json({
     token,
     position: user.position,
   });
 };
-
+exports.checkEmail = async (req, res) => {
+  const emailCheck = await User.findOne({ email: req.body.email });
+  console.log(emailCheck);
+  if (emailCheck) {
+    const checkSameUser = await User.findOne({
+      email: req.body.email,
+      _id: req.body._id,
+    });
+    if (checkSameUser) return res.status(200).json({ email: req.body.email });
+    return res.status(409).json({ message: "Email already in use" });
+  }
+  return res.status(200).json({ email: req.body.email });
+};
 exports.signUp = async (req, res) => {
   try {
+    const passRegex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=~`[\]{}|\\:;"'<>,.?/]).{8,}$/;
+
     if (
       !(
         req.body.first_name &&
@@ -54,6 +70,9 @@ exports.signUp = async (req, res) => {
     }
     if (req.body.password !== req.body.password_confirm) {
       return res.status(400).json({ message: "Password didn't match" });
+    }
+    if (!passRegex.test(req.body.password)) {
+      return res.status(400).json({ message: "Password failed" });
     }
     const salt = bcrypt.genSaltSync(12);
     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
@@ -80,15 +99,16 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ error: true, message: "User not found." });
+      return res.status(404).json({ message: "User not found." });
     }
     if (!(await user.checkPassword(password, user.password))) {
-      return res
-        .status(401)
-        .json({ error: true, message: "Incorrect email or password." });
+      return res.status(401).json({ message: "Incorrect email or password." });
     }
     createAndSendToken(user, res, 200);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
 };
 
 exports.protect = async (req, res, next) => {
@@ -182,24 +202,17 @@ exports.googleLogin = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     const id = await decodeToken(req.headers.token);
-    console.log(
-      "////////////////////////////////////////",
-      id,
-      "////////////////////////////////////////"
-    );
     var currentUser = await User.findOne({ _id: id });
     if (!currentUser)
       return res.status(404).json({ error: true, message: "Error Occured" });
     if (currentUser.position == "Driver") {
       var driver = await Driver.findOne({ user: id });
-      console.log("driver >>> ", driver);
       if (driver) {
-        console.log(true);
         currentUser = { ...driver.toObject(), ...currentUser.toObject() };
-        console.log("currentUser >>> ", currentUser);
       }
     }
     delete currentUser.password;
+    console.log(currentUser);
     return res.status(200).json({ message: "ok", user_data: currentUser });
   } catch (error) {
     console.log(error);
@@ -238,10 +251,26 @@ exports.updateUser = async (req, res, namesArray) => {
       req.body.lastName &&
       req.body.email &&
       req.body.gender &&
-      req.body.position
-    )
+      req.body.position === "Passenger"
+    ) {
       updateUser.finished_setting_up = true;
-    else updateUser.finished_setting_up = false;
+    } else if (
+      req.body.age &&
+      req.body.vehiculeType &&
+      req.body.registrationNumber &&
+      updateDriver.car_image &&
+      updateDriver.certificate &&
+      req.body.preferences &&
+      req.body.firstName &&
+      req.body.lastName &&
+      req.body.email &&
+      req.body.gender &&
+      req.body.position === "Driver"
+    ) {
+      updateDriver.finished_setting_up = true;
+    } else {
+      updateUser.finished_setting_up = false;
+    }
     await User.findOneAndUpdate({ _id: userID }, updateUser, {
       new: true,
     }).then((e) => (currentUser = e.toObject()));
@@ -252,25 +281,14 @@ exports.updateUser = async (req, res, namesArray) => {
       if (req.body.registrationNumber)
         updateDriver.registration_number = req.body.registrationNumber;
       if (req.body.preferences) updateDriver.preferences = req.body.preferences;
-
-      if (
-        req.body.age &&
-        req.body.vehiculeType &&
-        req.body.registrationNumber &&
-        updateDriver.car_image &&
-        updateDriver.certificate &&
-        req.body.preferences
-      )
-        updateDriver.finished_setting_up = true;
-      else updateDriver.finished_setting_up = false;
       await Driver.findOneAndUpdate({ user: userID }, updateDriver, {
         upsert: true,
         new: true,
-      }).then((e) => (currentUser = { ...e.toObject(), ...currentUser }));
+      }).then((e) => (currentUser = { ...currentUser, ...e.toObject() }));
     }
     delete currentUser.password;
-    currentUser.finished_setting_up = true;
     console.log(currentUser);
+    currentUser.finished_setting_up = false;
     return res.status(200).json({ message: "ok", user_data: currentUser });
   } catch (error) {
     console.log(error);

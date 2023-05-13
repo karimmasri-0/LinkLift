@@ -3,6 +3,7 @@ import React from "react";
 function ProfileFileInput({
   label,
   onChange,
+  disabled = false,
   onBlur,
   error,
   touched,
@@ -10,7 +11,11 @@ function ProfileFileInput({
   imageURL,
 }) {
   return (
-    <div className={`text-gray-900 ${touched && error && "text-red-400"}`}>
+    <div
+      className={`${disabled ? "text-gray-500" : "text-gray-900"} ${
+        touched && error && "text-red-400"
+      }`}
+    >
       <label htmlFor={label} className={`text-sm `}>
         {touched && error ? error : label}
         {required && <span className="text-red-500 ml-1 text-lg">*</span>}
@@ -21,6 +26,7 @@ function ProfileFileInput({
         type={"file"}
         onChange={onChange}
         onBlur={onBlur}
+        disabled={disabled}
         className={`ml-1 w-full p-2 bg-gray-50 border  text-sm rounded-md focus:border-cblue-100 focus:ring-cblue-100 file:px-4 file:py-1 file:mr-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-cblue-100/30 file:hover:bg-cblue-100/50 cursor-pointer ${
           touched && error ? "border-red-500" : "border-gray-500"
         }`}

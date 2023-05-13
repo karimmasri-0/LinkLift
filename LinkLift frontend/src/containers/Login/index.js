@@ -1,25 +1,77 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ProfileTextInput from "../Profile/ProfileTextInput";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../providers/AuthProvider";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { getToken } = useContext(AuthContext);
+  const postData = async (data) => {
+    axios
+      .post(
+        `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/login`,
+        { email: data.email, password: data.password }
+      )
+
+      .then((response) => {
+        console.log(response);
+        localStorage.setItem("token", JSON.stringify(response.data.token));
+        localStorage.setItem(
+          "position",
+          JSON.stringify(response.data.position)
+        );
+        getToken();
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      })
+      .catch((error) => {
+        console.error(error.message);
+        return error.message;
+      });
+  };
+
   const formik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: {
+      email: "",
+      password: "",
+    },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Email required"),
       password: Yup.string().required("Password required"),
     }),
-    onsubmit: async (values) => {
-      console.log(values);
+    onSubmit: (values) => {
+      toast.promise(
+        postData(values),
+        {
+          loading: "Loading",
+          success: (data) => {
+            console.log(data);
+
+            return "Successfully saved";
+          },
+          error: (err) => {
+            console.log(err);
+            return `${err}`;
+          },
+        },
+        {
+          success: {
+            duration: 3000,
+          },
+        }
+      );
     },
   });
   return (
     <section className="flex min-h-[100vh] items-center -mt-20 justify-center bg-gray-200">
       <div className="bg-white rounded-lg pb-12 w-96">
-        <div className="relative mb-8 w-full h-12 text-xl font-semibold bg-cblue-200 text-white rounded-t-lg">
-          <h2 className="absolute px-8 pt-2 bg-white rounded-lg text-black top-5 left-5">
+        <div className="relative mb-8 w-full h-16 text-xl font-semibold bg-cblue-200 text-white rounded-t-lg">
+          <h2 className="absolute px-8 pt-2 bg-white rounded-lg text-black -bottom-2 left-5">
             Log Into LinkLift
           </h2>
         </div>
@@ -40,6 +92,7 @@ const Login = () => {
           />
           <ProfileTextInput
             label="Password"
+            type="password"
             value={formik.values.password}
             onChange={formik.handleChange("password")}
             onBlur={formik.handleBlur("password")}

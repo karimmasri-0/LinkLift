@@ -34,7 +34,7 @@ const Register = () => {
 
   return (
     <section className="flex flex-col items-center justify-center">
-      <div className="px-6 mt-10 relative sm:w-2/3 md:w-3/6 lg:w-1/2">
+      <div className="px-6 mt-10 relative sm:w-2/3 lg:w-1/2">
         <div>
           <FormikWrapper
             initialValues={{
@@ -79,7 +79,20 @@ const Register = () => {
               validationSchema={Yup.object().shape({
                 email: Yup.string()
                   .email("Invalid email format")
-                  .required("Email required"),
+                  .required("Email required")
+                  .min(8, "Email must be at least 8 characters long")
+                  .test("email-test", "Email already in use", async (value) => {
+                    try {
+                      const response = await axios.post(
+                        `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/check-email`,
+                        { email: value }
+                      );
+                      if (response) return true;
+                    } catch (error) {
+                      console.log(error);
+                      return false;
+                    }
+                  }),
               })}
             >
               <TextInput name="email" type="email" label="Email" />
@@ -98,8 +111,11 @@ const Register = () => {
               title={"Choose a secure password"}
               validationSchema={Yup.object().shape({
                 password: Yup.string()
-                  .min(6, "Password must be at least 6 characters long")
-                  .required("Password required"),
+                  .required("Password required")
+                  .matches(
+                    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=~`[\]{}|\\:;"'<>,.?/]).{8,}$/,
+                    "Password must contain at least 8 characters, 1 capital letter, 1 speacial character and 1 number"
+                  ),
                 password_confirm: Yup.string()
                   .min(6, "Password must be at least 6 characters long")
                   .oneOf([Yup.ref("password")], "Password did not match")

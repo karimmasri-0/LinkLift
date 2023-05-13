@@ -18,6 +18,7 @@ function Profile() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState("");
   const [disabled, setDisabled] = useState(true);
+  const [disableInputOnSubmit, setDisableInputOnSubmit] = useState(false);
   const [certificateImageURL, setCertificateImageURL] = useState("");
   const [carImageURL, setCarImageURL] = useState("");
   const [pictureURL, setPictureURL] = useState("");
@@ -54,6 +55,7 @@ function Profile() {
 
   const formik = useFormik({
     initialValues: {
+      _id: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -105,7 +107,19 @@ function Profile() {
       email: Yup.string()
         .email()
         .min(8, "Email must be at least 8 characters long")
-        .required("Email required"),
+        .required("Email required")
+        .test("email-test", "Email already in use", async (value) => {
+          try {
+            const response = await axios.post(
+              `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/check-email`,
+              { email: value, _id: formik.values._id }
+            );
+            if (response) return true;
+          } catch (error) {
+            console.log(error);
+            return false;
+          }
+        }),
       phone: Yup.number()
         .positive()
         .integer()
@@ -172,7 +186,10 @@ function Profile() {
       toast.promise(
         postData(formData),
         {
-          loading: "Loading",
+          loading: () => {
+            setDisableInputOnSubmit(true);
+            return "Loading";
+          },
           success: () => {
             setTimeout(() => {
               navigate("/");
@@ -219,6 +236,7 @@ function Profile() {
         }
       );
       setUserData(response.data.user_data);
+      formik.values._id = response.data.user_data._id;
       formik.values.firstName = response.data.user_data.first_name;
       formik.values.lastName = response.data.user_data.last_name;
       formik.values.email = response.data.user_data.email;
@@ -443,6 +461,7 @@ function Profile() {
                       setChangedProfilePicture(true);
                       handleImageUpload(e, "picture", setPictureURL);
                     }}
+                    disabled={disableInputOnSubmit}
                     onBlur={formik.handleBlur("picture")}
                     hidden
                   />
@@ -458,6 +477,7 @@ function Profile() {
                           error={formik.errors.firstName}
                           placeholder={"Nikola"}
                           required={true}
+                          disabled={disableInputOnSubmit}
                         />
                       </div>
                       <div className="">
@@ -470,6 +490,7 @@ function Profile() {
                           error={formik.errors.lastName}
                           placeholder={"Tesla"}
                           required={true}
+                          disabled={disableInputOnSubmit}
                         />
                       </div>
                     </div>
@@ -491,6 +512,8 @@ function Profile() {
                           src={pictureURL}
                           onClick={() => profileImageRef.current.click()}
                           className={`w-24 h-24 z-10 border-2 rounded-full hover:opacity-40 transition-all cursor-pointer ${
+                            disableInputOnSubmit ? "opacity-40" : "opacity-100"
+                          } ${
                             formik.touched.picture && formik.errors.picture
                               ? " border-red-500 "
                               : " border-gray-500"
@@ -517,6 +540,7 @@ function Profile() {
                     error={formik.errors.email}
                     placeholder={"email@example.com"}
                     required={true}
+                    disabled={disableInputOnSubmit}
                   />
                   <ProfileTextInput
                     label="Phone number"
@@ -526,6 +550,7 @@ function Profile() {
                     touched={formik.touched.phone}
                     error={formik.errors.phone}
                     placeholder={"00 000 000"}
+                    disabled={disableInputOnSubmit}
                   />
                   <ProfileSelectInput
                     firstOption={"--Gender--"}
@@ -537,6 +562,7 @@ function Profile() {
                     onChange={formik.handleChange("gender")}
                     onBlur={formik.handleBlur("gender")}
                     required={true}
+                    disabled={disableInputOnSubmit}
                   />
                   <ProfileSelectInput
                     firstOption={"--Position--"}
@@ -548,6 +574,7 @@ function Profile() {
                     onChange={formik.handleChange("position")}
                     onBlur={formik.handleBlur("position")}
                     required={true}
+                    disabled={disableInputOnSubmit}
                   />
                 </div>
               </div>
@@ -563,6 +590,7 @@ function Profile() {
                     error={formik.errors.age}
                     onChange={formik.handleChange("age")}
                     onBlur={formik.handleBlur("age")}
+                    disabled={disableInputOnSubmit}
                   />
                   <ProfileSelectInput
                     firstOption={"--Vehicule Type--"}
@@ -585,6 +613,7 @@ function Profile() {
                     error={formik.errors.vehiculeType}
                     onChange={formik.handleChange("vehiculeType")}
                     onBlur={formik.handleBlur("vehiculeType")}
+                    disabled={disableInputOnSubmit}
                   />
                   <ProfileTextInput
                     label="Registration Number"
@@ -593,6 +622,7 @@ function Profile() {
                     error={formik.errors.registrationNumber}
                     onChange={formik.handleChange("registrationNumber")}
                     onBlur={formik.handleBlur("registrationNumber")}
+                    disabled={disableInputOnSubmit}
                   />
                   <ProfileFileInput
                     label="Car Image"
@@ -604,6 +634,7 @@ function Profile() {
                     }}
                     onBlur={formik.handleBlur("carImage")}
                     imageURL={carImageURL}
+                    disabled={disableInputOnSubmit}
                   />
                   <ProfileFileInput
                     label="Certificate"
@@ -619,8 +650,13 @@ function Profile() {
                     }}
                     onBlur={formik.handleBlur("certificate")}
                     imageURL={certificateImageURL}
+                    disabled={disableInputOnSubmit}
                   />
-                  <div className="pl-1">
+                  <div
+                    className={`${
+                      disableInputOnSubmit ? "text-gray-500" : "text-gray-900"
+                    } pl-1`}
+                  >
                     I alllow the following in my vehicule:
                     <ul className="pl-5">
                       <li>
@@ -633,8 +669,16 @@ function Profile() {
                           name="animals"
                           value="animals_allowed"
                           className="w-3 h-3 text-cblue-100 focus:border-cblue-100 focus:ring-transparent"
+                          disabled={disableInputOnSubmit}
                         />
-                        <label htmlFor="animals" className="ml-2 text-sm">
+                        <label
+                          htmlFor="animals"
+                          className={`${
+                            disableInputOnSubmit
+                              ? "text-gray-500"
+                              : "text-gray-900"
+                          } ml-2 text-sm`}
+                        >
                           Animals
                         </label>
                       </li>
@@ -648,8 +692,16 @@ function Profile() {
                           name="kids"
                           value="kids_allowed"
                           className="w-3 h-3 text-cblue-100 focus:border-cblue-100 focus:ring-cblue-100"
+                          disabled={disableInputOnSubmit}
                         />
-                        <label htmlFor="kids" className="ml-2 text-sm">
+                        <label
+                          htmlFor="kids"
+                          className={`${
+                            disableInputOnSubmit
+                              ? "text-gray-500"
+                              : "text-gray-900"
+                          } ml-2 text-sm`}
+                        >
                           Kids
                         </label>
                       </li>
@@ -663,8 +715,16 @@ function Profile() {
                           name="smoking"
                           value="smoking_allowed"
                           className="w-3 h-3 text-cblue-100 focus:border-cblue-100 focus:ring-cblue-100"
+                          disabled={disableInputOnSubmit}
                         />
-                        <label htmlFor="smoking" className="ml-2 text-sm">
+                        <label
+                          htmlFor="smoking"
+                          className={`${
+                            disableInputOnSubmit
+                              ? "text-gray-500"
+                              : "text-gray-900"
+                          } ml-2 text-sm`}
+                        >
                           Smoking
                         </label>
                       </li>
@@ -675,6 +735,7 @@ function Profile() {
               <div className="grid place-items-center">
                 <button
                   type="submit"
+                  disabled={disableInputOnSubmit}
                   className=" my-6 px-20 md:px-40 py-2 w-fit text-lg bg-cyan-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 trasnition-all focus:opacity-[0.85] focus:shadow-none"
                 >
                   Save

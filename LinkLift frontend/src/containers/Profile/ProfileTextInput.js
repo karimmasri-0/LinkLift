@@ -3,7 +3,7 @@ import React from "react";
 function ProfileTextInput({
   type = "text",
   label,
-  disabled,
+  disabled = false,
   value,
   onChange,
   onBlur,

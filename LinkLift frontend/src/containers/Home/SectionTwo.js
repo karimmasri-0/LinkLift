@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const SectionTwo = () => {
   const navigate = useNavigate();
   return (
-    <section className=" bg-gradient-to-tr from-cblue-300 to-cblue-100 py-8 px-16 flex flex-col justify-around items-center md:flex-row gap-8">
+    <section className=" bg-gradient-to-tr from-cblue-300 to-cblue-100 py-20 px-16 flex flex-col justify-around items-center md:flex-row gap-8">
       <img
         src={image}
         className="w-2/3 min-w-[250px] max-w-3xl md:w-1/2 lg:w-2/5 lg:py-6 lg:px-6"

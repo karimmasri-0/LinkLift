@@ -2,7 +2,7 @@ import React from "react";
 
 function ProfileSelectInput({
   label,
-  disabled,
+  disabled = false,
   elements,
   firstOption,
   error,

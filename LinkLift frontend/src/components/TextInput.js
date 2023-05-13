@@ -3,6 +3,7 @@ import React from "react";
 
 function TextInput({ label, ...props }) {
   const [field, meta, helpers] = useField(props);
+
   return (
     <div className={`my-3 ${meta.touched && meta.error && "text-red-400"}`}>
       <label htmlFor={label} className="text-sm">

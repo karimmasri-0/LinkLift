@@ -80,6 +80,9 @@ router.post("/update-user", upload.array("images"), async (req, res) => {
   }
 });
 
+router.post("/check-email", (req, res) => {
+  userController.checkEmail(req, res);
+});
 router.get("/top-reviews", (req, res) => {
   topReviewsController.getTopReviews(req, res);
 });

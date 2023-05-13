@@ -26,18 +26,16 @@ function FormikWrapper({ children, ...props }) {
               { ...values }
             );
             console.log(postresult);
-            if (!postresult.data.error) {
-              localStorage.setItem(
-                "token",
-                JSON.stringify(postresult.data.token)
-              );
-              localStorage.setItem(
-                "position",
-                JSON.stringify(postresult.data.position)
-              );
-              getToken();
-              navigate("/");
-            }
+            localStorage.setItem(
+              "token",
+              JSON.stringify(postresult.data.token)
+            );
+            localStorage.setItem(
+              "position",
+              JSON.stringify(postresult.data.position)
+            );
+            getToken();
+            navigate("/");
           } else {
             setStep((step) => step + 1);
             console.log(step);

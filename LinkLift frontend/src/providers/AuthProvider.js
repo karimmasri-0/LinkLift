@@ -21,13 +21,18 @@ function AuthProvider({ children }) {
           jwtDecode(tempToken).exp < Math.floor(new Date().getTime() / 1000)
         ) {
           localStorage.removeItem("token");
+          localStorage.removeItem("position");
           setToken("");
         } else {
           setToken(JSON.parse(tempToken));
         }
+      } else {
+        setToken("");
       }
       if (localStorage.getItem("position")) {
         setPosition(localStorage.getItem("role"));
+      } else {
+        setPosition("");
       }
     } catch (error) {
       console.log("Auth Provider ", error);

@@ -29,7 +29,7 @@ function DriverForm({ ...props }) {
           }}
         >
           <h2
-            className={`uppercase sm:text-lg absolute px-3 sm:px-6 py-2 rounded-md mt-2 left-1/2 -translate-x-1/2 transition-colors max-w-md ${
+            className={`uppercase md:text-lg absolute px-3 sm:px-6 py-2 rounded-md mt-2 left-1/2 -translate-x-1/2 transition-colors max-w-md ${
               position === "Driver"
                 ? "text-cblue-400 bg-white"
                 : "text-black bg-gray-100"
@@ -53,7 +53,7 @@ function DriverForm({ ...props }) {
           }}
         >
           <h2
-            className={`uppercase sm:text-lg absolute px-3 sm:px-6 py-2 rounded-md mt-2 left-1/2 -translate-x-1/2 transition-colors ${
+            className={`uppercase md:text-lg absolute px-3 sm:px-6 py-2 rounded-md mt-2 left-1/2 -translate-x-1/2 transition-colors ${
               position === "Passenger"
                 ? "text-cblue-400 bg-white"
                 : "text-black bg-gray-100"

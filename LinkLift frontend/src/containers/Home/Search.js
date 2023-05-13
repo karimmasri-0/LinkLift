@@ -61,7 +61,7 @@ const SearchForm = forwardRef((props, ref) => {
   };
 
   return (
-    <section className="py-24 mx-12 lg:py-36">
+    <section className="py-32 mx-12 md:py-40">
       {md ? (
         <div className=" flex items-center justify-center " ref={ref}>
           <form
