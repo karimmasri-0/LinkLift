@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./containers/Home";
-import About from "./containers/About";
-import Contact from "./containers/Contact";
-import Search from "./containers/Search";
-import NotFound from "./containers/NotFound";
-import Login from "./containers/Login";
-import Register from "./containers/Register";
-import PublishRide from "./containers/PublishRide";
-import Profile from "./containers/Profile";
+import Home from "../containers/Home";
+import About from "../containers/About";
+import Contact from "../containers/Contact";
+import Search from "../containers/Search";
+import NotFound from "../containers/NotFound";
+import Login from "../containers/Login";
+import Register from "../containers/Register";
+import PublishRide from "../containers/PublishRide";
+import Profile from "../containers/Profile";
 
 function MyRoutes() {
   const searchRef = useRef(null);

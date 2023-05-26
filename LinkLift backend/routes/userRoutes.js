@@ -6,6 +6,7 @@ const multer = require("multer");
 const axios = require("axios");
 const sharp = require("sharp");
 const fs = require("fs").promises;
+const authenticateToken = require("../authMiddleware");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -38,47 +39,52 @@ router.post("/auth/google-login", (req, res) => {
   userController.googleLogin(req, res);
 });
 
-router.get("/user", (req, res) => {
+router.get("/user", authenticateToken, (req, res) => {
   userController.getUser(req, res);
 });
 
-router.post("/update-user", upload.array("images"), async (req, res) => {
-  try {
-    var base64Images;
-    Promise.all(
-      await req.files.map(async (file) => {
-        base64Images = await fs.readFile("uploads/" + file.filename);
-        if (file.mimetype === "image/webp")
-          base64Images = sharp(base64Images).png();
-        return axios({
-          method: "post",
-          url: "https://api.imgur.com/3/image",
-          headers: {
-            Authorization: "Client-ID 87c45a2e9075dd6",
-            "Content-Type": "application/json",
-          },
-          data: base64Images,
-        })
-          .then(function (response) {
-            var filesNames = {};
-            if (file.filename.includes("__CERTIFICATE__"))
-              filesNames["CERTIFICATE"] = response.data.data.link;
-            else if (file.filename.includes("__CARIMAGE__"))
-              filesNames["CARIMAGE"] = response.data.data.link;
-            else if (file.filename.includes("__PICTURE__"))
-              filesNames["PICTURE"] = response.data.data.link;
-            console.log(filesNames);
-            return filesNames;
+router.post(
+  "/update-user",
+  upload.array("images"),
+  authenticateToken,
+  async (req, res) => {
+    try {
+      var base64Images;
+      Promise.all(
+        await req.files.map(async (file) => {
+          base64Images = await fs.readFile("uploads/" + file.filename);
+          if (file.mimetype === "image/webp")
+            base64Images = sharp(base64Images).png();
+          return axios({
+            method: "post",
+            url: "https://api.imgur.com/3/image",
+            headers: {
+              Authorization: "Client-ID 87c45a2e9075dd6",
+              "Content-Type": "application/json",
+            },
+            data: base64Images,
           })
-          .catch(function (error) {
-            console.error("Error uploading image:", error);
-          });
-      })
-    ).then((namesArray) => userController.updateUser(req, res, namesArray));
-  } catch (error) {
-    console.log(error);
+            .then(function (response) {
+              var filesNames = {};
+              if (file.filename.includes("__CERTIFICATE__"))
+                filesNames["CERTIFICATE"] = response.data.data.link;
+              else if (file.filename.includes("__CARIMAGE__"))
+                filesNames["CARIMAGE"] = response.data.data.link;
+              else if (file.filename.includes("__PICTURE__"))
+                filesNames["PICTURE"] = response.data.data.link;
+              console.log(filesNames);
+              return filesNames;
+            })
+            .catch(function (error) {
+              console.error("Error uploading image:", error);
+            });
+        })
+      ).then((namesArray) => userController.updateUser(req, res, namesArray));
+    } catch (error) {
+      console.log(error);
+    }
   }
-});
+);
 
 router.post("/check-email", (req, res) => {
   userController.checkEmail(req, res);

@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import driverIcon from "../../assets/driver-icon.png";
 import passengerIcon from "../../assets/passenger-icon.png";
 import { useField } from "formik";
 
 function DriverForm({ ...props }) {
-  const [field, meta, helpers] = useField(props);
+  const [meta, helpers] = useField(props);
   const [position, setPosition] = useState("");
-  useEffect(() => {
-    console.log(position);
-    console.log(field);
-  }, [position]);
 
   return (
     <>

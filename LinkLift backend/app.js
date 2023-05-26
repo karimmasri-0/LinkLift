@@ -3,8 +3,6 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-const userRoutes = require("./routes/userRoutes");
-const top
 const dbURi = "";
 
 mongoose
@@ -15,8 +13,6 @@ mongoose
   })
   .catch((error) => console.error(error));
 
-app.use("/user", userRoutes);
-app.use('',)
 app.use((req, res) => {
   res.status(404).json({ error: true });
 });

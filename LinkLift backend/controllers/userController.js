@@ -2,33 +2,17 @@ const User = require("../models/userModel");
 const Driver = require("../models/driverModel");
 const validator = require("validator");
 const jsonwebtoken = require("jsonwebtoken");
-const { promisify } = require("util");
 const bcrypt = require("bcrypt");
-const { ObjectId } = require("mongodb");
 
-const decodeToken = async (token) => {
-  try {
-    const decoded = await promisify(jsonwebtoken.verify)(
-      token,
-      process.env.JWT_SECRET
-    );
-    return new ObjectId(decoded.id);
-  } catch (error) {
-    console.log(error);
-  }
-};
-const signToken = (id) => {
-  return jsonwebtoken.sign({ id }, process.env.JWT_SECRET, {
+const signToken = (_id, position) => {
+  return jsonwebtoken.sign({ _id, position }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 const createAndSendToken = (user, res, statusCode) => {
   console.log(user);
-  const token = signToken(user._id);
-  return res.status(statusCode).json({
-    token,
-    position: user.position,
-  });
+  const token = signToken(user._id, user.position);
+  return res.status(statusCode).json({ token });
 };
 exports.checkEmail = async (req, res) => {
   const emailCheck = await User.findOne({ email: req.body.email });
@@ -111,70 +95,70 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.protect = async (req, res, next) => {
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-  if (!token) {
-    return res
-      .status(401)
-      .json({ error: true, message: "You are not logged in." });
-  }
-  let decoded;
-  try {
-    decoded = await promisify(jsonwebtoken.verify)(
-      token,
-      process.env.JWT_SECRET
-    );
-    const currentUser = User.findById(decoded.id);
-    if (!currentUser) {
-      return res
-        .status(401)
-        .json({ error: true, message: "The token owner no longer exist" });
-    }
-    if (currentUser.passwordChangedAfterTokenIssued(decoded.iat)) {
-      return res.status(401).json({
-        error: true,
-        message: "Your password has been changed please log in again.",
-      });
-    }
+// exports.protect = async (req, res, next) => {
+//   let token;
+//   if (
+//     req.headers.authorization &&
+//     req.headers.authorization.startsWith("Bearer")
+//   ) {
+//     token = req.headers.authorization.split(" ")[1];
+//   }
+//   if (!token) {
+//     return res
+//       .status(401)
+//       .json({ error: true, message: "You are not logged in." });
+//   }
+//   let decoded;
+//   try {
+//     decoded = await promisify(jsonwebtoken.verify)(
+//       token,
+//       process.env.JWT_SECRET
+//     );
+//     const currentUser = User.findById(decoded.id);
+//     if (!currentUser) {
+//       return res
+//         .status(401)
+//         .json({ error: true, message: "The token owner no longer exist" });
+//     }
+//     if (currentUser.passwordChangedAfterTokenIssued(decoded.iat)) {
+//       return res.status(401).json({
+//         error: true,
+//         message: "Your password has been changed please log in again.",
+//       });
+//     }
 
-    req.user = currentUser;
-    next();
-  } catch (error) {
-    if (error.name === "JsonWebTokenError")
-      return res.status(401).json({ error: true, message: "Invalid Token" });
-    else if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ error: true, message: "Token expired" });
-    }
-  }
-};
+//     req.user = currentUser;
+//     next();
+//   } catch (error) {
+//     if (error.name === "JsonWebTokenError")
+//       return res.status(401).json({ error: true, message: "Invalid Token" });
+//     else if (error.name === "TokenExpiredError") {
+//       return res.status(401).json({ error: true, message: "Token expired" });
+//     }
+//   }
+// };
 
-exports.checkToken = async (req, res) => {
-  console.log("checking token", req.body.token);
-  try {
-    const decoded = await promisify(jsonwebtoken.verify)(
-      req.body.token,
-      process.env.JWT_SECRET
-    );
-    const currentUser = User.findById(decoded);
-    if (currentUser) {
-      return res.status(200).json({ error: false, message: "Valid Token" });
-    } else {
-      return res.status(401).json({ error: true, message: "Invalid Token" });
-    }
-  } catch (error) {
-    if (error.name === "JsonWebTokenError")
-      return res.status(401).json({ error: true, message: "Invalid Token" });
-    else if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ error: true, message: "Token expired" });
-    }
-  }
-};
+// exports.checkToken = async (req, res) => {
+//   console.log("checking token", req.body.token);
+//   try {
+//     const decoded = await promisify(jsonwebtoken.verify)(
+//       req.body.token,
+//       process.env.JWT_SECRET
+//     );
+//     const currentUser = User.findById(decoded);
+//     if (currentUser) {
+//       return res.status(200).json({ error: false, message: "Valid Token" });
+//     } else {
+//       return res.status(401).json({ error: true, message: "Invalid Token" });
+//     }
+//   } catch (error) {
+//     if (error.name === "JsonWebTokenError")
+//       return res.status(401).json({ error: true, message: "Invalid Token" });
+//     else if (error.name === "TokenExpiredError") {
+//       return res.status(401).json({ error: true, message: "Token expired" });
+//     }
+//   }
+// };
 
 exports.googleLogin = async (req, res) => {
   try {
@@ -201,18 +185,17 @@ exports.googleLogin = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const id = await decodeToken(req.headers.token);
-    var currentUser = await User.findOne({ _id: id });
+    var currentUser = await User.findOne({ _id: req.user._id });
     if (!currentUser)
       return res.status(404).json({ error: true, message: "Error Occured" });
     if (currentUser.position == "Driver") {
-      var driver = await Driver.findOne({ user: id });
+      var driver = await Driver.findOne({ user: req.user._id });
       if (driver) {
         currentUser = { ...driver.toObject(), ...currentUser.toObject() };
       }
     }
     delete currentUser.password;
-    console.log(currentUser);
+    // console.log(currentUser);
     return res.status(200).json({ message: "ok", user_data: currentUser });
   } catch (error) {
     console.log(error);
@@ -223,9 +206,9 @@ exports.getUser = async (req, res) => {
 exports.updateUser = async (req, res, namesArray) => {
   try {
     var currentUser = {};
+    const temp = { finished_setting_up: false };
     const updateUser = {};
     const updateDriver = {};
-    const userID = await decodeToken(req.headers.token);
     console.log(
       "////////////////UPDATE USER////////////////////////\n",
       namesArray,
@@ -245,51 +228,73 @@ exports.updateUser = async (req, res, namesArray) => {
     updateUser.email = req.body.email;
     updateUser.gender = req.body.gender;
     updateUser.position = req.body.position;
-    if (req.body.phone) updateUser.phone_number = req.body.phone;
-    if (
-      req.body.firstName &&
-      req.body.lastName &&
-      req.body.email &&
-      req.body.gender &&
-      req.body.position === "Passenger"
-    ) {
-      updateUser.finished_setting_up = true;
-    } else if (
-      req.body.age &&
-      req.body.vehiculeType &&
-      req.body.registrationNumber &&
-      updateDriver.car_image &&
-      updateDriver.certificate &&
-      req.body.preferences &&
-      req.body.firstName &&
-      req.body.lastName &&
-      req.body.email &&
-      req.body.gender &&
-      req.body.position === "Driver"
-    ) {
-      updateDriver.finished_setting_up = true;
-    } else {
-      updateUser.finished_setting_up = false;
-    }
-    await User.findOneAndUpdate({ _id: userID }, updateUser, {
+    updateUser.phone_number = req.body.phone;
+    await User.findOneAndUpdate({ _id: req.user._id }, updateUser, {
       new: true,
-    }).then((e) => (currentUser = e.toObject()));
-    if (req.body.position == "Driver") {
-      if (req.body.age) updateDriver.age = req.body.age;
-      if (req.body.vehiculeType)
-        updateDriver.vehicule_type = req.body.vehiculeType;
-      if (req.body.registrationNumber)
-        updateDriver.registration_number = req.body.registrationNumber;
-      if (req.body.preferences) updateDriver.preferences = req.body.preferences;
-      await Driver.findOneAndUpdate({ user: userID }, updateDriver, {
+    }).then(async (e) => {
+      if (
+        e.toObject().first_name &&
+        e.toObject().last_name &&
+        e.toObject().email &&
+        e.toObject().gender
+      ) {
+        temp.finished_setting_up = true;
+      } else {
+        temp.finished_setting_up = false;
+      }
+      return await User.findOneAndUpdate(
+        { _id: req.user._id },
+        { temp },
+        {
+          upsert: true,
+          new: true,
+        }
+      ).then((e) => (currentUser = e.toObject()));
+    });
+    if (req.body.position === "Driver") {
+      // if (req.body.age)
+      updateDriver.age = req.body.age;
+      // if (req.body.vehiculeType)
+      updateDriver.vehicule_type = req.body.vehiculeType;
+      // if (req.body.registrationNumber)
+      updateDriver.registration_number = req.body.registrationNumber;
+      // if (req.body.preferences)
+      updateDriver.preferences = req.body.preferences;
+      await Driver.findOneAndUpdate({ user: req.user._id }, updateDriver, {
         upsert: true,
         new: true,
-      }).then((e) => (currentUser = { ...currentUser, ...e.toObject() }));
+      }).then(async (d) => {
+        // console.log(
+        //   e.toObject().age &&
+        //     e.toObject().vehicule_type &&
+        //     e.toObject().registration_number &&
+        //     e.toObject().car_image &&
+        //     e.toObject().certificate
+        //   // temp.finished_setting_up === true
+        // );
+        if (
+          d.toObject().age &&
+          d.toObject().vehicule_type &&
+          d.toObject().registration_number &&
+          d.toObject().car_image &&
+          d.toObject().certificate &&
+          d.toObject().preferences &&
+          temp.finished_setting_up === true
+        )
+          temp.finished_setting_up = true;
+        else temp.finished_setting_up = false;
+        return await User.findOneAndUpdate({ _id: req.user._id }, temp, {
+          new: true,
+        }).then((p) => {
+          currentUser = { ...d.toObject(), ...p.toObject() };
+          return currentUser;
+        });
+      });
     }
     delete currentUser.password;
-    console.log(currentUser);
-    currentUser.finished_setting_up = false;
-    return res.status(200).json({ message: "ok", user_data: currentUser });
+    // console.log(currentUser);
+    createAndSendToken(currentUser, res, 200);
+    // return res.status(200).json({ message: "ok", user_data: currentUser });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "error" });

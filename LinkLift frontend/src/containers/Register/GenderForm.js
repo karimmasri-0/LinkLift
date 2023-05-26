@@ -4,7 +4,7 @@ import React, { useState } from "react";
 function GenderForm({ ...props }) {
   const [maleChecked, setMaleChecked] = useState(false);
   const [femaleChecked, setFemaleChecked] = useState(false);
-  const [field, meta, helpers] = useField(props);
+  const [meta, helpers] = useField(props);
 
   return (
     <>

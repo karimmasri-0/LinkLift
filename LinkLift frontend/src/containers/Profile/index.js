@@ -14,7 +14,7 @@ import { MdOutlineCameraswitch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
-  const { token } = useContext(AuthContext);
+  const { token, getToken } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userData, setUserData] = useState("");
   const [disabled, setDisabled] = useState(true);
@@ -39,12 +39,12 @@ function Profile() {
   }, [token]);
 
   const postData = async (formData) => {
-    await axios.post(
+    return await axios.post(
       `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/update-user`,
       formData,
       {
         headers: {
-          token: token,
+          authorization: token,
           accept: "application/json",
           "Accept-Language": "en-US,en;q=0.8",
           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
@@ -128,10 +128,10 @@ function Profile() {
       position: Yup.string().required("Position required"),
       age: Yup.number("Age must be a number")
         .typeError("Age must be a number")
-        .positive("Age must be a number")
         .integer("Age must be a number")
         .min(18, "Too young")
-        .max(100, "Too old"),
+        .max(100, "Too old")
+        .nonNullable("nonnul"),
       vehiculeType: Yup.string(),
       registrationNumber: Yup.string(),
       carImage: Yup.mixed()
@@ -160,6 +160,8 @@ function Profile() {
         ),
     }),
     onSubmit: async (values) => {
+      console.log(values);
+      setDisableInputOnSubmit(true);
       const formData = new FormData();
       for (let key in values) {
         if (Array.isArray(values[key])) {
@@ -182,21 +184,21 @@ function Profile() {
           formData.append(key, values[key]);
         }
       }
-
       toast.promise(
         postData(formData),
         {
           loading: () => {
-            setDisableInputOnSubmit(true);
             return "Loading";
           },
-          success: () => {
+          success: (response) => {
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            getToken();
             setTimeout(() => {
               navigate("/");
             }, 1500);
             return "Successfully saved";
           },
-          error: (err) => `${err.response.data.message}`,
+          error: (err) => err.response.data.message,
         },
         {
           success: {
@@ -229,11 +231,7 @@ function Profile() {
     try {
       const response = await axios.get(
         `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/user`,
-        {
-          headers: {
-            token: token,
-          },
-        }
+        { headers: { authorization: token } }
       );
       setUserData(response.data.user_data);
       formik.values._id = response.data.user_data._id;
@@ -736,7 +734,9 @@ function Profile() {
                 <button
                   type="submit"
                   disabled={disableInputOnSubmit}
-                  className=" my-6 px-20 md:px-40 py-2 w-fit text-lg bg-cyan-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 trasnition-all focus:opacity-[0.85] focus:shadow-none"
+                  className={`my-6 px-20 md:px-40 py-2 w-fit text-lg bg-cyan-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 trasnition-all focus:opacity-[0.85] focus:shadow-none ${
+                    disableInputOnSubmit ? "cursor-progress" : "cursor-pointer"
+                  }`}
                 >
                   Save
                 </button>

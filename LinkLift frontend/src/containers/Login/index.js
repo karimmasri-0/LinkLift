@@ -11,28 +11,10 @@ const Login = () => {
   const navigate = useNavigate();
   const { getToken } = useContext(AuthContext);
   const postData = async (data) => {
-    axios
-      .post(
-        `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/login`,
-        { email: data.email, password: data.password }
-      )
-
-      .then((response) => {
-        console.log(response);
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-        localStorage.setItem(
-          "position",
-          JSON.stringify(response.data.position)
-        );
-        getToken();
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        console.error(error.message);
-        return error.message;
-      });
+    return await axios.post(
+      `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/login`,
+      { email: data.email, password: data.password }
+    );
   };
 
   const formik = useFormik({
@@ -45,19 +27,20 @@ const Login = () => {
       password: Yup.string().required("Password required"),
     }),
     onSubmit: (values) => {
+      const tryPost = postData(values);
       toast.promise(
-        postData(values),
+        tryPost,
         {
-          loading: "Loading",
-          success: (data) => {
-            console.log(data);
-
-            return "Successfully saved";
+          loading: () => "Loading",
+          success: (response) => {
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            getToken();
+            setTimeout(() => {
+              navigate("/");
+            }, 1500);
+            return "You are logged in";
           },
-          error: (err) => {
-            console.log(err);
-            return `${err}`;
-          },
+          error: (error) => error.response.data.message,
         },
         {
           success: {

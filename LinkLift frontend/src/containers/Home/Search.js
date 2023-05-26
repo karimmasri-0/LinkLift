@@ -8,12 +8,14 @@ import FocusTrap from "focus-trap-react";
 import { usePopper } from "react-popper";
 import "react-day-picker/dist/style.css";
 import { TiUserAdd } from "react-icons/ti";
+import { useNavigate } from "react-router-dom";
 
 const SearchForm = forwardRef((props, ref) => {
   const [nbPassengers, setNbPassengers] = useState();
   const [selectedDate, setSelectedDate] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [isPopperOpen, setIsPopperOpen] = useState(false);
+  const navigate = useNavigate();
 
   const popperRef = useRef(null);
   const buttonRef = useRef(null);
@@ -22,8 +24,7 @@ const SearchForm = forwardRef((props, ref) => {
   const md = useMediaQuery({ query: "(min-width: 768px)" });
   const submitSearch = (e) => {
     e.preventDefault();
-    alert("Search Submit");
-    console.log(e);
+    navigate("rides");
   };
 
   const popper = usePopper(popperRef.current, popperElement, {

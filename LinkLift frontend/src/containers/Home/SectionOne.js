@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Image from "../../assets/shield-driver-1.png";
 import { AuthContext } from "../../providers/AuthProvider";
-import { FiArrowRight } from "react-icons/fi";
 import axios from "axios";
 import { BsArrowRightShort } from "react-icons/bs";
 
@@ -17,16 +16,12 @@ function SectionOne() {
           `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/user`,
           {
             headers: {
-              token: token,
+              authorization: token,
             },
           }
         );
 
         setFinishedSettingUp(response.data.user_data.finished_setting_up);
-        console.log(
-          "response success",
-          response.data.user_data.finished_setting_up
-        );
       }
     } catch (error) {
       console.log("response failed", error);

@@ -1,0 +1,41 @@
+const { Schema, default: mongoose } = require("mongoose");
+
+const citiesSchema = new Schema({
+  Pcode: { type: String, required: true, unique: true },
+  Location_Name_En: { type: String, required: true },
+  Location_Name_Arabic: { type: String, required: true },
+  Latitude: { type: Number, required: true },
+  Longitude: { type: Number, required: true },
+  Elevation: { type: Number, required: true },
+  Governorate: { type: String, required: true },
+  Governorate_Ar: { type: String, required: true },
+  UN_AreaOfOperation: { type: String, required: true },
+  UN_AreaOfOperation_Ar: { type: String, required: true },
+  District: { type: String, required: true },
+  District_Ar: { type: String, required: true },
+  CAS_CODE: { type: Number, required: true },
+  CAS_CODE_UN: { type: String, required: true },
+  CAD_CODE: { type: String, required: true },
+  CAS_NAME: { type: String, required: true },
+  CAS_NAME_Ar: { type: String, required: true },
+  C_ref_name: { type: String, required: true },
+  CAS_MaxElevation: { type: Number, required: true },
+  Cadastral_Type: { type: String, required: true },
+  Municipality_ID: { type: String, required: true },
+  Municipality_Name_EN: { type: String, required: true },
+  Municipality_Name_AR: { type: String, required: true },
+  Municipality_Phone: { type: String, required: true },
+  Municipality_Address: { type: String, required: true },
+  UNION_ID: { type: Number, required: true },
+  Union_Full: { type: String, required: true },
+  UOM_Name: { type: String, required: true },
+  Google_Map_link: { type: String, required: true },
+  Google_Map: { type: String, required: true },
+  UNHCR_Location: { type: String, required: true },
+  Governorate_old: { type: String, required: true },
+  Governorate_old_Ar: { type: String, required: true },
+  Pcode_change: { type: String, required: true },
+});
+
+const City = mongoose.model("City", citiesSchema);
+module.exports = City;

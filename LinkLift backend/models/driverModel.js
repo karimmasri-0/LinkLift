@@ -10,31 +10,37 @@ const driverSchema = new Schema(
     age: {
       type: Number,
       bsonType: "int",
+      default: null,
       // required: true,
     },
     vehicule_type: {
       type: String,
       bsonType: "string",
+      default: null,
       // required: true,
     },
     registration_number: {
       type: Number,
       bsonType: "int",
+      default: null,
       // required: false,
     },
     certificate: {
       type: String,
       bsonType: "string",
+      default: null,
       // required: false,
     },
     car_image: {
       type: String,
       bsonType: "string",
+      default: null,
       // required: false,
     },
     preferences: {
       type: Array,
       bsonType: "array",
+      default: [],
     },
     evaluation: {
       comments: {

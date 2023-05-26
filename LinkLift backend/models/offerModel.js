@@ -1,77 +1,72 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const User = require("../models/userModel");
 
 const offerSchema = new Schema(
   {
     posted_by: {
       type: Schema.Types.ObjectId,
-      ref: "User",
-      bsonType: "objectId",
-      required: true,
-    },
-    taken: {
-      type: Boolean,
-      bsonType: "bool",
+      ref: "Driver",
+      // bsonType: "objectId",
       required: true,
     },
     taken_by: {
-      type: Schema.Types.ObjectId,
-      bsonType: "objectId",
-      required: true,
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+      // bsonType: "objectId",
     },
-    deparature: {
+    departure: {
       type: String,
       bsonType: "string",
-      required: true,
     },
-    arrival: {
+    destination: {
       type: String,
       bsonType: "string",
-      required: true,
     },
     distance: {
       type: Schema.Types.Decimal128,
       bsonType: "double",
       default: 0.0,
-      required: true,
+    },
+    duration: {
+      type: Schema.Types.Decimal128,
+      bsonType: "double",
+      default: 0.0,
     },
     passage: {
       type: [String],
       bsonType: "array",
-      required: true,
     },
-    departure_date: {
-      type: Date,
+    date: {
+      type: String,
       bsonType: "string",
-      required: true,
     },
-    passengers_nb: {
+    time: {
+      type: String,
+      bsonType: "string",
+    },
+    seats: {
       type: Number,
       bsonType: "int",
-      required: true,
+      enum: [1, 2, 3, 4, 5],
     },
     cost: {
       type: Schema.Types.Decimal128,
       bsonType: "double",
       default: 0.0,
-      required: true,
     },
-    luggage: {
-      size: {
-        type: String,
-        bsonType: "string",
-        enum: ["sm", "md", "lg", "xl"],
-        required: false,
-      },
-      space: {
-        type: Number,
-        bsonType: "int",
-        required: false,
-      },
+    luggage_size: {
+      type: String,
+      bsonType: "string",
+      enum: ["small", "medium", "large", "extra_large"],
+    },
+    luggage_number: {
+      type: Number,
+      bsonType: "int",
+      enum: [1, 2, 3, 4, 5],
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Offer", offerSchema);
+const Offer = mongoose.model("Offer", offerSchema);
+module.exports = Offer;
