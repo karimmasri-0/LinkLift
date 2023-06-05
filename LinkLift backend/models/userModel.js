@@ -47,7 +47,7 @@ const userSchema = new Schema(
     position: {
       type: String,
       required: false,
-      enum: ["Driver", "Passenger", "undefined"],
+      enum: ["Driver", "Passenger", undefined],
     },
     finished_setting_up: {
       type: Boolean,

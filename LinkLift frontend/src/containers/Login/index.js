@@ -6,6 +6,7 @@ import ProfileTextInput from "../Profile/ProfileTextInput";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -50,6 +51,24 @@ const Login = () => {
       );
     },
   });
+  const handleGoogleSuccessCallback = async (response) => {
+    const res = await axios.post(
+      `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/auth/google-login`,
+      { googleCredentialResponse: response.credential }
+    );
+    console.log(response);
+    if (res.status === 201) {
+      localStorage.setItem("token", JSON.stringify(res.data.token));
+      localStorage.setItem("user_data", JSON.stringify(res.data.data));
+      getToken();
+      navigate("/");
+    }
+  };
+
+  const handleGoogleFailedCallback = (error) => {
+    console.log(error);
+  };
+
   return (
     <section className="flex min-h-[100vh] items-center -mt-20 justify-center bg-gray-200">
       <div className="bg-white rounded-lg pb-12 w-96">
@@ -91,6 +110,22 @@ const Login = () => {
             Submit
           </button>
         </form>
+        <div className="inline-flex items-center justify-center w-full">
+          <hr className="w-64 h-px my-8 bg-gray-200 border-0" />
+          <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2">
+            or
+          </span>
+        </div>
+        <div className="mx-auto w-fit">
+          <GoogleLogin
+            onSuccess={(response) => {
+              handleGoogleSuccessCallback(response);
+            }}
+            onError={(error) => {
+              handleGoogleFailedCallback(error);
+            }}
+          />
+        </div>
       </div>
     </section>
   );

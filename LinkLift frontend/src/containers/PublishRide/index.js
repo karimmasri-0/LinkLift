@@ -8,18 +8,15 @@ import * as Yup from "yup";
 import { toast } from "react-hot-toast";
 import { DatePicker, TimePicker } from "baseui/datepicker";
 import Select from "react-select";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { BsArrowRightShort } from "react-icons/bs";
 
 function PublishRide() {
   const [disableInputOnSubmit, setDisableInputOnSubmit] = useState(false);
   const [rideId, setRideId] = useState("");
   const animatedComponents = makeAnimated();
-  const { token, position } = useContext(AuthContext);
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (position !== "Driver") navigate("/");
-  }, [position]);
+  const { token } = useContext(AuthContext);
+
   const postRide = async (values) => {
     console.log(values);
     return await axios.post(
@@ -66,7 +63,7 @@ function PublishRide() {
       luggage_size: Yup.string().required("Required"),
     }),
     onSubmit: (values) => {
-      // setDisableInputOnSubmit(true);
+      setDisableInputOnSubmit(true);
       console.log(values);
       values.formatedTime =
         values.time.getHours() +
@@ -76,9 +73,9 @@ function PublishRide() {
         values.time.getSeconds();
       values.formatedDate =
         values.date.getDate() +
-        "/" +
-        values.date.getMonth() +
-        "/" +
+        "-" +
+        (parseInt(values.date.getMonth()) + 1) +
+        "-" +
         values.date.getFullYear();
       toast.promise(
         postRide(values),
@@ -107,7 +104,6 @@ function PublishRide() {
       const response = await axios.get(
         `http://${process.env.REACT_APP_IP}:${process.env.REACT_APP_PORT}/get-cities`,
         { params: { text } }
-        // { headers: { authorization: token } }
       );
       const options = response.data.data.map((city) => ({
         value: city.Pcode,

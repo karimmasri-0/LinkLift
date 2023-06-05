@@ -7,6 +7,7 @@ import { GiDuration, GiPathDistance } from "react-icons/gi";
 import { ScaleLoader } from "react-spinners";
 import { AuthContext } from "../../providers/AuthProvider";
 import { toast } from "react-hot-toast";
+import expired from "../../assets/expired.png";
 
 function Ride() {
   const [ride, setRide] = useState({});
@@ -14,6 +15,13 @@ function Ride() {
   const [seatsTaken, setSeatsTaken] = useState(0);
   const { token, position } = useContext(AuthContext);
   const { rideId } = useParams();
+
+  const dateFormater = (dateStr) => {
+    const parts = dateStr.split("-");
+    const formattedDateStr = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    const date = new Date(formattedDateStr);
+    return date;
+  };
 
   useEffect(() => {
     const getRide = async () => {
@@ -72,7 +80,7 @@ function Ride() {
             seatsTaken ? "bg-cyan-100" : "bg-gray-200"
           }`}
         >
-          <div className=" min-w-max">
+          <div className="">
             <div className="md:hidden gap-2 text-center mb-8 mt-4">
               <div className=" flex items-center justify-center">
                 <div className="text-2xl">
@@ -107,10 +115,20 @@ function Ride() {
               <div className="my-1">
                 <span className="text-lg">{ride.driver.first_name}</span>
                 <span className="text-lg ml-1">{ride.driver.last_name}</span>
+                <div className="text-sm text-gray-500">
+                  (+961) {ride.driver.phone_number}
+                </div>
               </div>
             </div>
           </div>
-          <div className="">
+          <div className="relative">
+            {dateFormater(ride.date) < new Date() && (
+              <img
+                src={expired}
+                alt="expired"
+                className="absolute top-1/2 -translate-y-1/2"
+              />
+            )}
             <div className="hidden md:block">
               <div className=" text-2xl md:flex text-center items-center gap-2 mb-8">
                 <div>
@@ -161,9 +179,12 @@ function Ride() {
               onSubmit={bookRide}
               className="grid place-content-center my-8"
             >
-              {console.log(position !== "Passenger")}
+              {console.log(dateFormater(ride.date))}
               <button
-                disabled={position !== "Passenger"}
+                disabled={
+                  position !== "Passenger" ||
+                  dateFormater(ride.date) < new Date()
+                }
                 type="submit"
                 className="px-16 py-2 rounded-lg bg-cblue-200 text-white shadow-md hover:shadow-lg shadow-cblue-200/20 hover:shadow-cblue-200/40 transition-all focus:opacity-75 disabled:cursor-not-allowed disabled:bg-cblue-200/30 disabled:hover:shadow"
               >

@@ -4,7 +4,8 @@ import passengerIcon from "../../assets/passenger-icon.png";
 import { useField } from "formik";
 
 function DriverForm({ ...props }) {
-  const [meta, helpers] = useField(props);
+  const [field, meta, helpers] = useField(props);
+  console.log("useFIreld", useField("position"));
   const [position, setPosition] = useState("");
 
   return (

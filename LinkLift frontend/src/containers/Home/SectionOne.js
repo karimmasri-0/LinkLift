@@ -48,7 +48,7 @@ function SectionOne() {
         {!token && (
           <Link
             to={"auth/register"}
-            className="px-6 py-2 block w-fit bg-cblue-100 text-white text-lg rounded hover:shadow-lg my-12"
+            className="px-6 py-2 block w-fit bg-cblue-100 text-white text-lg rounded shadow-md shadow-cblue-100 hover:shadow-cblue-200/80 hover:shadow-lg my-12 hover:bg-cblue-200/90 transition-all"
           >
             Sign up to drive
           </Link>

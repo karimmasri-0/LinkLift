@@ -66,6 +66,24 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     );
+  } else if (position === undefined) {
+    var r = (
+      <Routes>
+        <Route path="/" element={<Home ref={searchRef} />} />
+        <Route path="auth/login" element={<Login />} />
+        <Route path="auth/register" element={<Register />} />
+        <Route path="about-us" element={<About />} />
+        <Route path="how-it-works" element={<About />} />
+        <Route path="help-center" element={<About />} />
+        <Route path="contact" element={<Contact />} />
+        {/* <Route path="search" element={<Search />} /> */}
+        <Route path="profile" element={<Profile />} />
+        <Route path="logout" element={<Logout />} />
+        <Route path="rides" element={<Rides />} />
+        <Route path="rides/:rideId" element={<Ride />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    );
   } else {
     var r = (
       <Routes>

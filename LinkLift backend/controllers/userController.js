@@ -85,6 +85,8 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
+    if (!user.password)
+      return res.status(401).json({ message: "Please login with google." });
     if (!(await user.checkPassword(password, user.password))) {
       return res.status(401).json({ message: "Incorrect email or password." });
     }
@@ -171,6 +173,7 @@ exports.googleLogin = async (req, res) => {
         last_name: decoded.family_name,
         picture: decoded.picture,
         email: decoded.email,
+        position: undefined,
         finished_setting_up: false,
       });
       createAndSendToken(newUser, res, 201);
@@ -242,36 +245,20 @@ exports.updateUser = async (req, res, namesArray) => {
       } else {
         temp.finished_setting_up = false;
       }
-      return await User.findOneAndUpdate(
-        { _id: req.user._id },
-        { temp },
-        {
-          upsert: true,
-          new: true,
-        }
-      ).then((e) => (currentUser = e.toObject()));
+      return await User.findOneAndUpdate({ _id: req.user._id }, temp, {
+        upsert: true,
+        new: true,
+      }).then((e) => (currentUser = e.toObject()));
     });
     if (req.body.position === "Driver") {
-      // if (req.body.age)
       updateDriver.age = req.body.age;
-      // if (req.body.vehiculeType)
       updateDriver.vehicule_type = req.body.vehiculeType;
-      // if (req.body.registrationNumber)
       updateDriver.registration_number = req.body.registrationNumber;
-      // if (req.body.preferences)
       updateDriver.preferences = req.body.preferences;
       await Driver.findOneAndUpdate({ user: req.user._id }, updateDriver, {
         upsert: true,
         new: true,
       }).then(async (d) => {
-        // console.log(
-        //   e.toObject().age &&
-        //     e.toObject().vehicule_type &&
-        //     e.toObject().registration_number &&
-        //     e.toObject().car_image &&
-        //     e.toObject().certificate
-        //   // temp.finished_setting_up === true
-        // );
         if (
           d.toObject().age &&
           d.toObject().vehicule_type &&
@@ -292,9 +279,7 @@ exports.updateUser = async (req, res, namesArray) => {
       });
     }
     delete currentUser.password;
-    // console.log(currentUser);
     createAndSendToken(currentUser, res, 200);
-    // return res.status(200).json({ message: "ok", user_data: currentUser });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "error" });

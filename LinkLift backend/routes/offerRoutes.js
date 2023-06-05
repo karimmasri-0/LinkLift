@@ -15,5 +15,8 @@ router.get("/my-rides", authenticateToken, (req, res) => {
 router.post("/book-ride", authenticateToken, (req, res) => {
   offerController.bookRide(req, res);
 });
+router.get("/search", (req, res) => {
+  offerController.search(req, res);
+});
 
 module.exports = router;

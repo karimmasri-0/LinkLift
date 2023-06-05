@@ -157,3 +157,23 @@ exports.bookRide = async (req, res) => {
     res.status(500).json({ error: error });
   }
 };
+exports.search = async (req, res) => {
+  try {
+    const date = new Date(req.query.date);
+    const formatedDate =
+      date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear;
+    const offers = await Offer.find({
+      $or: [
+        { departure: { $regex: req.query.departure, $options: "i" } },
+        { destination: { $regex: req.query.destination, $options: "i" } },
+        { date: { $regex: formatedDate, $options: "i" } },
+        // { seats: { $regex: parseInt(req.query.passengers) } },
+      ],
+    }).sort({ createdAt: "asc" });
+    if (offers) return res.status(200).json({ message: "ok", data: offers });
+    return res.status(200).json({ message: "ok" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error });
+  }
+};
