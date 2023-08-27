@@ -19,5 +19,3 @@ LinkLift is an innovative carpooling website designed to tackle traffic congesti
 - **Advanced Filtering:** Implemented sophisticated search filters, empowering users to precisely tailor their carpooling preferences.
 - **Traffic Optimization:** Contributed to traffic reduction efforts by creating a user-friendly solution for shared commuting.
 - **API Integration:** Integrated external APIs to enhance navigation accuracy and media sharing capabilities.
-
-LinkLift is committed to revolutionizing commuting habits, promoting cost savings, and contributing to a greener environment. Join us in reshaping the way we travel by becoming a part of our growing community.
