@@ -27,34 +27,60 @@ function MyRides() {
   }, [token]);
 
   return (
-    <section className="mt-12 mx-8 lg:mx-32 xl:mx-44">
-      {rides.length !== 0 ? (
-        <div className="grid md:grid-cols-2 gap-6 ">
-          {rides.map((ride) => (
+    <section className="mt-12 mx-8 ">
+      <div className="w-full ">
+        <div className="bg-cblue-200 w-full flex rounded-t text-white py-2 text-lg font-semibold text-center">
+          <div className="w-3/12">Departure</div>
+          <div className="w-3/12">Arrival</div>
+          <div className="w-2/12">Date</div>
+          <div className="w-2/12">Time</div>
+          <div className="w-2/12">Seats</div>
+        </div>
+        {rides.length !== 0 ? (
+          rides.map((ride) => (
             <Link
               to={`/rides/${ride._id}`}
               key={ride.departure_city._id}
-              className={`shadow-md items-center gap-4 rounded-xl py-4 text-gray-900 text-lg px-8 cursor-pointer w-full flex flex-col justify-center ${
-                ride.seats_taken ? "bg-cyan-200" : "bg-gray-200"
-              }`}
+              className="border-b border-r border-l flex justify-around py-1 first:text-xl last:rounded-b even:bg-white odd:bg-cyan-50 hover:bg-cyan-100 transition-all"
             >
-              <div className="p-1 px-6 rounded-lg bg-white text-gray-500 text-sm">
-                {ride.date} {ride.time}
+              <div className="w-3/12 text-center">
+                {ride.departure_city.Location_Name_En}
               </div>
-              <div className=" flex items-center justify-center gap-3">
-                {ride.departure_city.Location_Name_En} <FaLongArrowAltRight />
+              <div className="w-3/12 text-center">
                 {ride.destination_city.Location_Name_En}
               </div>
+              <div className="w-2/12 text-center">{ride.date}</div>
+              <div className="w-2/12 text-center">{ride.time}</div>
+              <div className="w-2/12 text-center">
+                {ride.seats_taken}/{ride.seats_available}
+              </div>
             </Link>
-          ))}
-        </div>
-      ) : (
-        <div className="flex justify-center mt-44">
-          <ScaleLoader color="#7985e6" />
-        </div>
-      )}
+          ))
+        ) : (
+          <div className="flex justify-center mt-44">
+            <ScaleLoader color="#7985e6" />
+          </div>
+        )}
+      </div>
     </section>
   );
 }
 
 export default MyRides;
+
+{
+  /* <div className="border-b border-r border-l flex justify-around py-1">
+              <span>Departure</span>
+              <span>Arrival</span>
+              <span>Date</span>
+              <span>Time</span>
+              <span>Seats</span>
+            </div>
+            <div className="border-b border-r border-l rounded-b flex justify-around py-1">
+              <span>Departure</span>
+              <span>Arrival</span>
+              <span>Date</span>
+              <span>Time</span>
+              <span>Seats</span>
+            </div> */
+}

@@ -57,6 +57,7 @@ exports.getMyOffers = async (req, res) => {
           departure_city: departure_city,
           destination_city: destination_city,
           seats_taken: offer.taken_by.length,
+          seats_available: offer.seats,
           date: offer.date,
           time: offer.time,
           _id: offer._id,

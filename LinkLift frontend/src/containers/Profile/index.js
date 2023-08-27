@@ -286,10 +286,10 @@ function Profile() {
       {userData ? (
         formik.values.position === "Passenger" ? (
           <div className="flex justify-center my-20">
-            <div className="p-12 relative">
-              <div className="bg-gray-200 border border-cblue-100 shadow-xl rounded">
+            <div className="relative p-12">
+              <div className="bg-gray-200 border rounded shadow-xl border-cblue-100">
                 <TiEdit
-                  className="text-green-400 float-right m-2 cursor-pointer hover:bg-gray-300 active: rounded p-1 text-3xl transition-all"
+                  className="float-right p-1 m-2 text-3xl text-green-400 transition-all rounded cursor-pointer hover:bg-gray-300 active:"
                   onClick={() => setDisabled((v) => !v)}
                 />
                 <input
@@ -304,7 +304,7 @@ function Profile() {
                   onBlur={formik.handleBlur("picture")}
                   hidden
                 />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2">
+                <div className="absolute top-0 -translate-x-1/2 left-1/2">
                   {imageHover && (
                     <div
                       className={`z-0 ${
@@ -312,7 +312,7 @@ function Profile() {
                       } transition-all`}
                     >
                       <MdOutlineCameraswitch
-                        className="absolute  top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 text-black"
+                        className="absolute text-black translate-x-1/2 -translate-y-1/2 top-1/2 right-1/2"
                         size={30}
                       />
                     </div>
@@ -331,7 +331,7 @@ function Profile() {
                   />
 
                   {formik.touched.picture && formik.errors.picture && (
-                    <div className="absolute text-red-500 text-sm">
+                    <div className="absolute text-sm text-red-500">
                       {formik.errors.picture}
                     </div>
                   )}
@@ -339,7 +339,7 @@ function Profile() {
                 <form
                   onSubmit={formik.handleSubmit}
                   onReset={formik.handleReset}
-                  className="mt-16 px-6 py-4 flex flex-col gap-3"
+                  className="flex flex-col gap-3 px-6 py-4 mt-16"
                 >
                   <ProfileTextInput
                     label="First Name"
@@ -440,17 +440,17 @@ function Profile() {
           <form
             onSubmit={formik.handleSubmit}
             onReset={formik.handleReset}
-            className="lg:grid lg:grid-cols-2 grid place-items-center w-full"
+            className="grid w-full lg:grid lg:grid-cols-2 place-items-center"
           >
-            <div className=" lg:col-span-1 max-w-md">
-              <img src={driverInfo} alt="Driver Profile" className=" " />
+            <div className="max-w-md  lg:col-span-1">
+              <img src={driverInfo} alt="Driver Profile" className="" />
             </div>
-            <div className="bg-cyan-50 sm:h-screen sm:overflow-scroll my-16 lg:col-span-1 mx-8">
-              <div className="space-y-3 relative">
-                <h2 className="bg-cblue-100 text-white text-2xl py-4 px-8">
+            <div className="mx-8 my-16 bg-cyan-50 sm:h-screen sm:overflow-scroll lg:col-span-1">
+              <div className="relative space-y-3">
+                <h2 className="px-8 py-4 text-2xl text-white bg-cblue-100">
                   Personal Information
                 </h2>
-                <div className="space-y-5 px-4 sm:w-2/3 ">
+                <div className="px-4 space-y-5 sm:w-2/3 ">
                   <input
                     type="file"
                     ref={profileImageRef}
@@ -464,7 +464,7 @@ function Profile() {
                     hidden
                   />
                   <div className="grid grid-cols-2 sm:grid-cols-1">
-                    <div className="sm:flex sm:items-center sm:gap-4 space-y-4 sm:space-y-0 w-full  col-span-1">
+                    <div className="w-full col-span-1 space-y-4 sm:flex sm:items-center sm:gap-4 sm:space-y-0">
                       <div className="">
                         <ProfileTextInput
                           label="First Name"
@@ -493,7 +493,7 @@ function Profile() {
                       </div>
                     </div>
                     <div className="grid place-items-center">
-                      <div className="sm:absolute col-span-1 top-20 right-5 ">
+                      <div className="col-span-1 sm:absolute top-20 right-5 ">
                         {imageHover && (
                           <div
                             className={`z-0 ${
@@ -501,7 +501,7 @@ function Profile() {
                             } transition-all`}
                           >
                             <MdOutlineCameraswitch
-                              className="absolute  top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 text-black"
+                              className="absolute text-black translate-x-1/2 -translate-y-1/2 top-1/2 right-1/2"
                               size={30}
                             />
                           </div>
@@ -522,7 +522,7 @@ function Profile() {
                         />
 
                         {formik.touched.picture && formik.errors.picture && (
-                          <div className="absolute text-red-500 text-sm">
+                          <div className="absolute text-sm text-red-500">
                             {formik.errors.picture}
                           </div>
                         )}
@@ -577,10 +577,10 @@ function Profile() {
                 </div>
               </div>
               <div className="mt-4 space-y-3 ">
-                <h2 className="bg-cblue-100 text-white text-2xl py-4 px-8">
+                <h2 className="px-8 py-4 text-2xl text-white bg-cblue-100">
                   Driving Consent
                 </h2>
-                <div className=" space-y-3 px-4 sm:w-2/3">
+                <div className="px-4 space-y-3  sm:w-2/3">
                   <ProfileTextInput
                     label="Age"
                     value={formik.values.age}
