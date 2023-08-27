@@ -1,4 +1,4 @@
-# Project Name: LinkLift
+# LinkLift
 
 LinkLift is an innovative carpooling website designed to tackle traffic congestion while fostering economic benefits. With a user-friendly interface and comprehensive features, the platform aims to create a seamless experience for both drivers and passengers. The system accommodates two distinct user roles: carpool providers and seekers. Each user is required to create a personalized account, furnishing essential details like contact information, gender, and, for drivers, additional data such as age, vehicle type, and registration number.
 
